@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html> 
+	<head> 
+		<script src="../p5/p5.js"></script>
+		<script src="../p5/addons/p5.dom.js"></script>		
+		<script src="../p5/addons/p5.sound.js"></script>
+		<META name="author" content="Arseny Khakhalin">
+		<META name="contact" content="khakhalin@gmail.com">
+		<meta name="description" content="Pre-Pulse Inhibition (PPI) protocol">
+	</head>
+	<body>
+	<div id="left" style="float:left; width:230px; background-color:rgb(160,160,160); font-size:10pt; font-family:Arial">
+		<p>Period (entire sequence), s:		<input type="text" id="my_period" value = "30" size=3 style="float:right; margin-right:5px"/></p>
+		<p>Background color (0 to 255):		<input type="text" id="my_background" value = "120" size=3 style="float:right; margin-right:5px"/></p>
+		<p><b>Running mode:</b></p>
+		<ul>
+		<input type="radio" name="stimMode" value="N" checked> Silent<br/>
+		<input type="radio" name="stimMode" value="S"> Singles<br/>
+		<input type="radio" name="stimMode" value="D"> PPI protocol<br/>		
+		</ul>
+		<p>To cycle, put more than one value, space-separated, in ONE of the windows below:</p>
+		<p>Volume, %:						<input type="text" id="my_volume" value = "10" size=7 style="float:right; margin-right:5px"/></p>
+		<p>ISI, ms:							<input type="text" id="my_isi" value = "100" size=7 style="float:right; margin-right:5px"/></p>
+		<p>Prepulse, % of pulse				<input type="text" id="my_prepulse" value = "20" size=7 style="float:right; margin-right:5px"/></p>
+		<p>Show countdown? <input type="checkbox" id="my_flagShowNumbers" checked/></p>
+		<p><button onclick="resetTrials();">Start anew</button></p>		
+		<div id="cycleNumber">Cycle: initialized</div>		
+		<div id="timeToFlash"></div>
+		<div id="console"></div>
+	</div>
+	<div id="viz5" >
+	<script type="text/javascript">
+	/*
+	Code by Arseny Khakhalin, Bard College
+	https://sites.google.com/site/khakhalin/
+	khakhalin@gmail.com
+	Version: Oct 2019
+	*/
+	
+	var my = {
+		/* Here "Dynamic" variables change all the time, "Parameters" are taken from the form, "Constants" are constants */
+		status: 0,			// Flag, set to 1 when it's time to flash. Dynamic
+		period: 1000, 		// Parameter
+		csize: 600,			// Canvas size. Constant
+		counter: 0,		// Number of this flash. Dynamic			
+		start: 0,			// Moment when the trial started. Dynamic
+		flagShowNumbers: 1, // Whether debugging numbers are to be shown. Parameter
+		color: 0,
+		background: 255,
+		stimMode: "S",		// Stimulus mode. Parameter
+		freq: 100,			// Sound frequency. Constant
+		
+		volume: 0.1,		// Sound volume (for the pulse). Parameter
+		isi: 0,				// Current official recommended isi. Parameter
+		prepulse: 0.2,		// How intense the pre-pulse is, compared to the pulse
+		cycleArray: 0,		// Array to cycle through (if available). Parameter
+		cycleN: 1,			// Cycle length (for correct PPI cycling). Parameter
+		
+		flagPreOK: 1,		// Whether giving a pre-pulse is currently OK (flags to 0 every period). Dynamic
+		legend: " ",		// Stimulus legend (for showing on screen). Dynamic
+		oscOn: 0,			// Whether the sound is on right now. Dynamic
+		soundLength: 10,	// Sound length in ms. Constant.
+		oscTime: 0			// Relative time around when the sound should be started (0 is when it is to be started). Dynamic
+		}
+	
+	
+	function startOscillators(){
+		if (typeof osc !== 'undefined') {
+			delete osc;
+			delete osc2;
+			}
+		osc = new p5.SawOsc(); osc.freq(my.freq); osc.pan(1); osc.phase(0.25); osc.amp(0);
+		osc2 = new p5.SawOsc(); osc2.freq(my.freq); osc2.pan(-1); osc2.phase(0.75); osc2.amp(0);
+		osc.start();
+		osc2.start(); 
+		}
+	
+	
+	function setup() {	  
+		myCanvas = createCanvas(my.csize, my.csize);
+		myCanvas.parent('viz5');
+		stroke(1);
+		fill(0);
+		
+		env = new p5.Env();
+		env.setADSR(0, 0.01, 1, 0); 		 	// setADSR(attackTime, decayTime, susPercent, releaseTime);
+		env.setRange(1, 0); 						//etRange(attackLevel, releaseLevel);
+		
+		startOscillators();
+	}
+	
+	
+	function resetTrials() {
+		my.counter = -1;
+		my.start = millis();
+		startOscillators();
+	}
+	
+
+	function draw() {
+		my.period = max(1,document.getElementById('my_period').value*1000); 				if(isNaN(my.period)) my.period = 20;
+		my.background = max(1,document.getElementById('my_background').value); 				if(isNaN(my.background)) my.background = 255;
+		
+		var tempV = document.getElementById('my_volume').value;			// Grab the array (potentially)
+		var tempP = document.getElementById('my_prepulse').value;		// ..for each of possible cyclers.
+		var tempI = document.getElementById('my_isi').value;
+		my.cycleN = 1;													// default value
+		if(tempV.indexOf(" ")>0) {my.cycleArray = tempV.split(" "); 
+			tempV = my.cycleArray[floor(my.counter/(1+(my.stimMode==="D")*1)) % my.cycleArray.length];}
+		if(tempP.indexOf(" ")>0) {my.cycleArray = tempP.split(" "); my.cycleN = my.cycleArray.length;	
+			tempP = my.cycleArray[max(0,(my.counter % (my.cycleN+1))-1)];}
+		if(tempI.indexOf(" ")>0) {my.cycleArray = tempI.split(" "); my.cycleN = my.cycleArray.length;	
+			tempI = my.cycleArray[max(0,(my.counter % (my.cycleN+1))-1)];}
+		my.volume = max(0,min(1,tempV/100));				if(isNaN(my.volume)) my.volume = 0.10;
+		my.prepulse = max(0,min(1,tempP/100));				if(isNaN(my.prepulse)) my.prepulse = 0.20;
+		my.isi = min(max(0,floor(tempI)),my.period-1);		if(isNaN(my.isi)) my.isi = 100;	
+		
+		var radios = document.getElementsByName('stimMode');
+		for (var i = 0, length = radios.length; i < length; i++) {
+			if (radios[i].checked) {
+				newStimMode = radios[i].value;
+				break;
+			}
+		}
+		if(newStimMode!==my.stimMode){
+			my.stimMode = newStimMode;
+			if(newStimMode!=="N"){ // If not nothing
+				startOscillators();
+			}			
+		}
+		my.legend = my.stimMode;
+		if(my.stimMode==="D") { 
+			if(my.counter % (1+my.cycleN) >= 1) {my.legend = my.legend+"2";} 	// >= instead of === because during cycling we have several doubles
+			else {my.legend = my.legend+"1";}
+		}
+		
+		document.body.style.backgroundColor = 'rgb('+my.background+','+my.background+','+my.background+')';
+		background(my.background);
+		fill(my.color);
+		
+		htmlSet("timeToFlash","Time to flash: " + (1+floor((my.start + my.period-millis())/1000)));
+		htmlSet("console","Next: " + my.legend + " isi=" + my.isi + " v=" + my.volume + " p=" + my.prepulse);
+		if(my.flagShowNumbers) {										// Information on the projected screen 
+			push(); 
+			stroke(255); noFill(); strokeWeight(0.5);			
+			scale(-1,1);
+			stroke(0); textSize(24); fill(0); noStroke();
+			text(my.counter + " " + my.legend + " isi=" + my.isi + " v=" + my.volume + " p=" + my.prepulse + 
+				" t=" + (1+floor((my.start + my.period-millis())/1000)),
+				-my.csize*0.8,my.csize*4/5);
+			pop();
+		}	
+			  
+		if((millis()-my.start >= my.period-my.isi) && 
+				(my.flagPreOK === 1) &&
+				(my.stimMode === "D") &&
+				(my.counter % (1+my.cycleN) >= 1)) { // Pre-pulse is to be delivered (right time, right phase, right mode, right stimulus number)
+			my.flagPreOK = 0;									// Only one pre-pulse per cycle, so disable this
+			env.scale(0,my.volume*my.prepulse);					// Scale envelope
+			env.play(osc);
+			env.play(osc2);				
+		}
+		
+		if(millis()-my.start >= my.period) {					// Time to present the stimulus
+			my.counter++;										// Count this instance
+			my.start = millis();								// Time when this period started
+			my.flagPreOK = 1;									// As the main sound sounded, pre-pulse is OK again
+			htmlSet("cycleNumber","Cycle: " + my.counter);
+			switch(my.stimMode){
+				case "N": // nothing
+					break;
+				case "S": // singles
+					env.scale(0,my.volume);
+					env.play(osc);
+					env.play(osc2);
+					break;					
+				case "D": // doubles					
+					env.scale(0,my.volume);
+					env.play(osc);
+					env.play(osc2);								// Switch to "show the stimulus" mode
+			}
+		}
+		
+		if(my.status===1) { 								// If it's OK to be showing the stimulus
+			my.gridInstance = floor((millis()-my.start)/my.gridPeriod);			// Which grid within a train?
+			drawGrid(my.gridInstance, (millis()-my.start)/my.gridPeriod-my.gridInstance);	// Communicate both the instance, and how long are we into it
+			if(my.gridInstance>=my.gridN) {					// Time to stop; switch the stimulation off
+				my.status = 0;			
+			}
+		}	
+	}
+	
+	
+	function resetTrials() {
+		my.counter = 0;
+		my.start = millis();
+		htmlSet("cycleNumber","Cycle: " + my.counter);
+	}
+	
+	function keyPressed() {
+	}
+	
+	function keyReleased() {
+	}
+
+	function htmlSet(name,s) {
+		document.getElementById(name).innerHTML = s;
+	}
+	
+		function htmlAdd(name,s) {
+		var theDiv = document.getElementById(name);
+		var content = document.createTextNode(s);
+		theDiv.appendChild(content);
+		theDiv.appendChild(document.createElement("br"));
+	}
+	
+    </script>       
+    </div>
+    
+	</body> 
+</html> 

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="../p5/p5.js"></script>
+		<script src="../p5/addons/p5.dom.js"></script>		
+		<script src="../p5/addons/p5.sound.js"></script>
+		<META name="author" content="Arseny Khakhalin">
+		<META name="contact" content="khakhalin@gmail.com">
+		<meta name="description" content="Opto-motor response test with grain size of different sizes">
+	</head>
+	<body>
+	<div id="left" style="float:left; width:200">
+		<p>Time to cross, ms:<br/>
+		<input type="text" id="my_period" value = "7000"/></p>
+		<p>Direction right?
+		<input type="checkbox" id="my_right" checked/></p>
+		<p>Angle of 60 degrees?
+		<input type="checkbox" id="my_angle"/></p>
+		<p>Grain size, px:<br/>
+		<input type="text" id="my_grain" value="4"/></p>
+		<p>Always run
+		<input type="checkbox" id="always_run" checked/></p>
+		<p>Screens to sweep:<br/>
+		<input type="text" id="sweep_length" value="1"/></p>
+		<p><input type="button" id="start_button" onclick="startSweep()" value="Sweep"></p>
+		<div id="fps"></div>
+	</div>
+	<div id="viz5" style="padding-top:10px; margin-left:200px"><script type="text/javascript">
+
+	var my = {canvas_size: 600,
+			"period": 3000,		// Time to cross the screen, ms. Parameter
+			"x": 20,
+			"n": 4,
+			"width": 0,
+			"rotated": 0,
+			"angle": 0,
+			"grain": 3,			// grain size
+			"secondsPassed": 0,	// total seconds passed since the beginning of the experiment (for reporting)
+			"frameStart": 0,
+			"sweepStarted": 0,	// tic for when the sweep started
+			"sweepLength": 1,	// how many screens to sweep during a sweep
+			"alwaysRun": 1		// flag, whether should be always running
+			};
+
+	function setup() {
+		myCanvas = createCanvas(my.canvas_size, my.canvas_size);
+		myCanvas.parent('viz5');
+		//myCanvas.position(300, 50);
+		stroke(0);
+		fill(0);
+	}
+	
+	function startSweep(){
+		my.sweepStarted = millis();
+	}
+
+	function draw() {
+		my.period = max(1,document.getElementById('my_period').value); if(isNaN(my.period)) my.period = 1000;
+		my.alwaysRun = document.getElementById('always_run').checked;
+		my.right = document.getElementById('my_right').checked;
+		my.angle = document.getElementById('my_angle').checked;
+		my.sweepLength = max(1,document.getElementById('sweep_length').value); if(isNaN(my.sweepLength)) my.sweepLength = 1;
+
+		if(floor(millis()/1000) > my.secondsPassed) {
+			my.secondsPassed++;
+			htmlSet('fps',"FPS: " + String(frameCount-my.frameStart) + "<br>" + my.secondsPassed);
+			my.frameStart = frameCount;
+			}
+
+		if(my.grain != round(document.getElementById('my_grain').value)) { // Time to recalculate everything
+			my.grain = floor(document.getElementById('my_grain').value);
+			if(my.grain==0) my.grain = 20;
+			if(isNaN(my.grain)) my.grain = 20;
+			img_fore = createImage(my.canvas_size, my.canvas_size+400);
+			for(i=0; i<img_fore.width; i=i+my.grain) // Create the image
+				for(j=0; j<img_fore.height; j=j+my.grain) {
+					temp = 255*round(random());
+					for(ii=0; ii<my.grain; ii++)
+						for(jj=0; jj<my.grain; jj++)
+							img_fore.set(i+ii,j+jj,temp);
+					}
+			img_fore.updatePixels();
+			}
+
+		if(my.angle)	{
+				if(my.right)
+					my.angle = -PI/3.0;
+				else
+					my.angle = PI/3.0;
+				rotate(my.angle);
+				translate(my.canvas_size/2*(cos(my.angle)+sin(my.angle)-1),my.canvas_size/2*(-sin(my.angle)+cos(my.angle)-1));
+			}
+			
+		if(my.alwaysRun || millis()-my.sweepStarted < my.sweepLength*my.period){
+			background(255);
+			if(my.right)
+				my.x = round(my.canvas_size*(millis()/my.period)) % my.canvas_size;
+			else
+				my.x = my.canvas_size - round(my.canvas_size*(millis()/my.period)) % my.canvas_size;
+			image(img_fore,my.x,-200);
+			image(img_fore,my.x - my.canvas_size,-200);
+			if(my.angle) {
+				image(img_fore,my.x - my.canvas_size*2,-200);
+				image(img_fore,my.x + my.canvas_size,-200);
+				}
+			}
+		else{
+			background(128);
+			line(my.canvas_size/2,0,my.canvas_size/2,my.canvas_size);
+		}
+	}
+
+	function htmlSet(name,s) {
+		document.getElementById(name).innerHTML = s;
+		}
+
+    </script>
+    </div>
+
+	</body>
+</html>

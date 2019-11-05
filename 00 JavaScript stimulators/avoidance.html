@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html> 
+	<head> 
+		<script src="../p5/p5.js"></script>
+		<script src="../p5/addons/p5.dom.js"></script>
+		<script src="../p5/addons/p5.sound.js"></script>
+		<META name="author" content="Arseny Khakhalin">
+		<META name="contact" content="khakhalin@gmail.com">
+		<meta name="description" content="Test for collision avoidance. Citation: Khakhalin A.S. et. al. 2014. E J Neurosci">
+	</head>
+	<body id="body">
+	<div id="container" style="">
+	<div id="left" style="width:200px; display:inline-block; *display: inline; vertical-align: top">
+		<p>Dish radius, px:<br/>
+		<input type="text" id="my_bigR" value = "145"/></p>
+		<p>Background (255 to 0):<br/>
+		<input type="text" id="my_backColor" value = "160"/></p>
+		<p>Dead time, s:<br/>
+		<input type="text" id="my_deadTime" value = "30"/></p>
+		<p>Dot Travel Time, ms:<br/>
+		<input type="text" id="my_travelTime" value = "2500"/></p>
+		<p>Dot radius, px:<br/>
+		<input type="text" id="my_size" value = "10"/></p>
+		<p>Make sound? 
+		<input type="checkbox" id="my_sound"/></p>
+		<p>Sound-border ISI, ms:<br/>
+		<input type="text" id="my_isi" value = "0"/></p>
+		<div id="div_counter"> </div>
+		<div id="div_timer"> </div>
+		<div id="div_fps"> </div>
+	</div>
+	<div id="viz5" style="width:700px; display:inline-block; *display: inline; vertical-align: top;">
+	<script type="text/javascript">
+	
+	var my = {
+		/* Here "Dynamic" variables change all the time, "Parameters" are taken from the form, "Constants" are constants */
+		/* Note that if a value is a parameter, you need to actually set it in the form above, not here. */
+		/* It will be overwritten immediately, once the program is started! */
+		"period": 1000, 
+		"x": 0,
+		"y": 0,
+		"r": 0,
+		"csize": 500,		// Canvas size, px. Constant.
+		"bigR": 200,		// Dish radius, px. Parameter.
+		"status": 0,		// When 1, the dot is shown. When 0, it's hidden.
+		"dot_counter": 0,
+		"secondsPassed": 0,	// For FPS calculations
+		"frameStart": 0,
+		"start": 0,			// tic for when the dot is sent
+		"size": 30,			// Dot size. Parameter
+		"angle": 0,			// Target angle. Dynamic.
+		"angleSpeed": 0,	// Current angle speed (is reset by key presses). Dynamic.
+		"travelTime": 1000,	// Time travel in ms. Parameter.
+		"deadTime": 5,		// How many seconds to wait from dot to dot. Parameter.
+		"flag_sound": 0,	// Flag for whether the program is in "Sounde mode"
+		"oscReady": 0,		// Flag for whether sound could be on (to AND with flag_sound)
+		"oscOn": 0,			// Flag whether Osc is actually currently on
+		"freq": 100,		// Oscillator frequency, Hz. Constant.		
+		"isi": 0,			// Collision-to-sound inter-stimulus interval, ms. Parameter.
+		"soundLength": 10,	// Sound length in ms. Constant.
+		"oscTime": 0,		// Relative time around when the sound should be started (0 is when it is to be started) - dynamic variable
+		"firstRun": 1,		// Flag to catch the first frame ever
+		"backColor": 255	// Background color
+		}
+	
+	
+	function setup() {	  
+		myCanvas = createCanvas(my.csize, my.csize);
+		myCanvas.parent('viz5');
+		//myCanvas.position(300, 50);
+		stroke(1);
+		fill(0);		
+	}
+	
+	function startOscillators(){
+		if (typeof osc !== 'undefined') {
+			delete osc;
+			delete osc2;
+			}
+		osc = new p5.SawOsc(); osc.freq(my.freq); osc.pan(1); osc.phase(0.25); osc.amp(0);
+		osc2 = new p5.SawOsc(); osc2.freq(my.freq); osc2.pan(-1); osc2.phase(0.75); osc2.amp(0);
+		osc.start();
+		osc2.start(); 
+		}
+	
+	function draw() {
+		my.bigR = max(1,floor(document.getElementById('my_bigR').value)); if(isNaN(my.bigR)) my.bigR = 1;
+		my.travelTime = max(1,floor(document.getElementById('my_travelTime').value)); if(isNaN(my.travelTime)) my.travelTime = 1000;	
+		my.deadTime = max(1,floor(document.getElementById('my_deadTime').value)); if(isNaN(my.deadTime)) my.deadTime = 20;	
+		my.size = max(1,floor(document.getElementById('my_size').value)); if(isNaN(my.size)) my.size = 15;
+		my.isi = floor(document.getElementById('my_isi').value); if(isNaN(my.isi)) my.isi = 0;
+		my.backColor = min(255,max(0,floor(document.getElementById('my_backColor').value))); if(isNaN(my.size)) my.size = 15;
+		if(document.getElementById('my_sound').checked) {
+			if(my.flag_sound==0) { // If just turned on..
+				startOscillators(); // use this opportunity to attempt restarting faulty oscillators
+				}
+			my.flag_sound = 1;
+			} 
+		else {
+			my.flag_sound = 0;
+			}
+
+		document.getElementById("body").style="background-color:rgb("+my.backColor+","+my.backColor+","+my.backColor+")";
+		
+		background(my.backColor);
+		translate(my.csize/2,my.csize/2); 
+		fill(my.backColor); stroke(1); // For the dish and target
+		ellipse(0,0,my.bigR*2,my.bigR*2);	   
+		fill(0);
+		
+		if(my.firstRun){
+			my.firstRun = 0;
+			startOscillators();
+			}
+
+		if(my.status) { // Display the dot travels
+			tempTime = (millis()-my.start)/my.travelTime; // How far is the dot from the center
+			if(tempTime > 3) {tempTime = 0; fill(my.backColor*0.9);}
+			else if(tempTime > 2) {tempTime = 1-(tempTime-2); fill(my.backColor*0.9);}
+			else if(tempTime > 1) {tempTime = 1; fill(0);}
+			else {fill(0);}
+			my.r = tempTime*(my.bigR-my.size-5);
+		}
+			if(millis()-my.start >= my.deadTime*1000) { // Can ungray it now
+			fill(0);
+		}
+
+		my.angle = my.angle+my.angleSpeed;
+		my.x = my.r*cos(my.angle);
+		my.y = my.r*sin(my.angle);	  
+		line(my.bigR*cos(my.angle),my.bigR*sin(my.angle),(my.bigR+20)*cos(my.angle),(my.bigR+20)*sin(my.angle));
+
+		noStroke(); // For the dot	  
+		ellipse(my.x,my.y,my.size*2,my.size*2);
+		htmlSet("div_timer","Seconds passed: " + round((millis()-my.start)/1000));
+		htmlSet("div_counter","Dot # " + my.dot_counter);
+
+		my.oscTime = millis()-my.start-(my.travelTime+my.isi); // Time since (or to) "collision"
+		if(my.flag_sound && my.oscReady && !my.oscOn) { // The sound haven't played yet
+			if(my.oscTime>=0) {
+				osc.amp(1); osc2.amp(1);
+				my.oscOn = 1;
+				my.oscTime = 0; // Reset time to prevent sounds that are too short
+				my.oscReady = 0; // New sound shouldn't start again until a time reset (new dot)
+				}
+			}
+		if(my.oscTime>=my.soundLength) { // Check if needs to be turned off	
+			if(my.oscOn){
+				osc.amp(0); osc2.amp(0);
+				my.oscOn = 0;			
+				}
+			my.oscReady = 0; // If sound was off when the dot was started, still close the opportunity
+			}
+		
+		// FPS counter
+		if(floor(millis()/1000) > my.secondsPassed) {
+			my.secondsPassed++;
+			htmlSet('div_fps',"FPS: " + String(frameCount-my.frameStart));
+			my.frameStart = frameCount;
+			}
+		}
+	
+	function keyPressed() {
+		if(keyCode == UP_ARROW){ // Send the dot
+			my.status = 1;
+			my.start = millis();
+			my.dot_counter++;
+			my.oscReady = 1; 	// Create new sound opportunity
+			}
+		if(keyCode == DOWN_ARROW){ // Re-center the dot
+			my.status = 0;		// Hide dot	    
+			my.oscReady = 0; 	// Cancel sound opportunity
+			my.r = 0; 			// Radius to 0
+			}
+		if(keyCode == LEFT_ARROW) {
+			my.angleSpeed = PI/180*2;
+			}
+		if(keyCode == RIGHT_ARROW) {
+			my.angleSpeed = -PI/180*2;
+			}
+		if(keyCode == ENTER){
+			startOscillators();
+			}
+		}
+	
+	function keyReleased() {
+		my.angleSpeed = 0;
+		}
+	
+	function htmlSet(name,s) {
+		document.getElementById(name).innerHTML = s;
+		}	
+	
+    </script>       
+    </div>
+    <div id="right" style="visibility:hidden; vertical-align: top; display:inline-block; *display: inline; width:400px;">
+		<h3>Tadpole Chaiser Manual:</h3>
+		<ul>
+			<li>Left / Right arrows: target</li>
+			<li>Z: send the dot</li>
+		</ul>
+		<p>Note: if you change any values in the form on the left, make sure to get out of the form 
+		(by clicking the arena) before pressing Z.</p>
+		<p>The dot travels one "Travel Time" to the border, stays one more Time there, and then takes
+		a Time to travel back to the center.</p>
+		<p>Technically you can re-send the dot before it's time to do so (while it is still gray),
+		but it is not fair. Don't do it.</p>
+	</div>
+	</div>
+	</body> 
+</html> 
