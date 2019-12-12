@@ -32,7 +32,8 @@
 			"x": 20,
 			"n": 4,
 			"width": 0,
-			"rotated": 0,
+			"right": 1,			// Directon of sweeping	
+			"rotated": 0,		// Straight or angled
 			"angle": 0,
 			"grain": 3,			// grain size
 			"secondsPassed": 0,	// total seconds passed since the beginning of the experiment (for reporting)
@@ -59,7 +60,7 @@
 		my.alwaysRun = document.getElementById('always_run').checked;
 		my.right = document.getElementById('my_right').checked;
 		my.angle = document.getElementById('my_angle').checked;
-		my.sweepLength = max(1,document.getElementById('sweep_length').value); if(isNaN(my.sweepLength)) my.sweepLength = 1;
+		my.sweepLength = max(my.grain/my.canvas_size,document.getElementById('sweep_length').value); if(isNaN(my.sweepLength)) my.sweepLength = 1;
 
 		if(floor(millis()/1000) > my.secondsPassed) {
 			my.secondsPassed++;
@@ -112,6 +113,24 @@
 
 	function htmlSet(name,s) {
 		document.getElementById(name).innerHTML = s;
+		}
+		
+	function keyPressed() {
+		if(keyCode == UP_ARROW){ // Ru Sweep
+			startSweep();
+			}
+		if(keyCode == DOWN_ARROW){
+			document.getElementById("always_run").checked = 0;
+			my.sweepStarted = my.sweepStarted-my.sweepLength*my.period; // Stop moving by faking death
+			}
+		if(keyCode == LEFT_ARROW) { // Set sweep direction
+			document.getElementById("my_right").checked = 0;
+			}
+		if(keyCode == RIGHT_ARROW) { // Set sweep direction
+			document.getElementById("my_right").checked = 1;
+			}
+		if(keyCode == ENTER){
+			}
 		}
 
     </script>
