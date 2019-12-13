@@ -1,6 +1,6 @@
 # Behavioral assays in Xenopus tadpoles
 
-A collection of software tools for behavioral studies in Xenopus tadpoles, to accompany an upcoming book chapter "Behavioral assays to assess neurodevelopmental function in Xenopus laevis tadpoles", by Aizenman, Khakhalin, and Lopez (CSH press).
+A collection of software tools for behavioral studies in Xenopus tadpoles, to accompany an upcoming paper "Behavioral assays to assess neurodevelopmental function in Xenopus laevis tadpoles", by Aizenman, Khakhalin, and Lopez (CSH press).
 
 ## Java Script stimulation programs
 
