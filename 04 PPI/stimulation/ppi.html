@@ -25,7 +25,7 @@
 		<p>Show countdown? <input type="checkbox" id="my_flagShowNumbers" checked/></p>
 		<p><button onclick="resetTrials();">Start anew</button></p>		
 		<div id="cycleNumber">Cycle: initialized</div>		
-		<div id="timeToFlash"></div>
+		<div id="timeToStim"></div>
 		<div id="console"></div>
 	</div>
 	<div id="viz5" >
@@ -114,6 +114,12 @@
 		my.volume = max(0,min(1,tempV/100));				if(isNaN(my.volume)) my.volume = 0.10;
 		my.prepulse = max(0,min(1,tempP/100));				if(isNaN(my.prepulse)) my.prepulse = 0.20;
 		my.isi = min(max(0,floor(tempI)),my.period-1);		if(isNaN(my.isi)) my.isi = 100;	
+		if(document.getElementById('my_flagShowNumbers').checked) {
+			my.flagShowNumbers = 1;
+			} 
+		else {
+			my.flagShowNumbers = 0;
+			}
 		
 		var radios = document.getElementsByName('stimMode');
 		for (var i = 0, length = radios.length; i < length; i++) {
@@ -138,7 +144,7 @@
 		background(my.background);
 		fill(my.color);
 		
-		htmlSet("timeToFlash","Time to flash: " + (1+floor((my.start + my.period-millis())/1000)));
+		htmlSet("timeToStim","Time to stim.: " + (1+floor((my.start + my.period-millis())/1000)));
 		htmlSet("console","Next: " + my.legend + " isi=" + my.isi + " v=" + my.volume + " p=" + my.prepulse);
 		if(my.flagShowNumbers) {										// Information on the projected screen 
 			push(); 
