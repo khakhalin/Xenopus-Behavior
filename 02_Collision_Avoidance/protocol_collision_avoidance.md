@@ -2,7 +2,9 @@
 
 Running title: Visual Collision Avoidance in Xenopus Tadpoles
 
-Arseny S. Khakhalin - Biology Program, Bard College, Ananndale-on-Hudson, NY, 12504, USA. khakhalin@bard.edu
+Arseny S. Khakhalin - Biology Program, Bard College, Annandale-on-Hudson, NY, 12504, USA. email: khakhalin@bard.edu
+
+## Abstract
 
 A good exam question is one that is easy to ask, but hard to answer, or better yet, a question that seems simple at first, but that can lead to nuanced and productive conversations. Similarly, if we wish to probe brain development behaviorally, we should look for behaviors that are easy to evoke and quantify, but that are demanding, inherently varying, and nuanced enough to serve as a good litmus test for brain function. Visual collision detection and avoidance in Xenopus tadpoles is a good example of such a behavior: it is ecologically relevant, robust, and easy to monitor, but also nuanced, plastic, and sensitive to both the developmental history of each animal, and its recent experiences (Khakhalin 2014; James 2015; Khakhalin 2019). Here we describe how to easily set up a visual avoidance assay in a lab, and how to use it as a sensitive test of sensory processing and sensorimotor transformations in the vertebrate brain.
 
@@ -14,21 +16,21 @@ Tadpole rearing solution: in DI H2O: 15 mM NaCl, 0.5 mM KCl, 1.0 mM MgSO4, 150 �
 
 ## Equipment
 
-Projection table
+* Projection table
 
 > To build a projection table you will need about 1100 cm (36 feet) of 20×40 mm (1'' × 2'') pine beam; 32 wood screws; 4 furniture felt pads; 2 pieces of clean acrylic 31×31 cm (1' × 1'); and a white disposable plastic apron. See Fig 1E for a blueprint.
 
-Short throw projector, such as AAXA P300 pico projector
+* Short throw projector, such as AAXA P300 pico projector
 
 > As an alternative projecting device, one can use an old CRT monitor, or an iPad-like tablet; see below.
 
-Computer with USB connection and Internet access
-Plastic Petri dish
-Web-camera for video recording
+* Computer with USB connection and Internet access
+* Plastic Petri dish
+* Web-camera for video recording
 
-Optional:
+**Optional:**
 
-Cardboard box to cover the top of the projection device
+* Cardboard box to cover the top of the projection device
 
 # Method
 
