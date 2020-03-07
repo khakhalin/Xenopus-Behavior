@@ -5,7 +5,7 @@ This repository contains collection of protocols and software tools for behavior
 ## Protocols
 
 * Schooling
-* [Collision Avoidance](https://github.com/khakhalin/js-experiments/blob/master/02_Collision_Avoidance/protocol_collision_avoidance.m)
+* [Collision Avoidance](https://github.com/khakhalin/Xenopus-Behavior/blob/master/02_Collision_Avoidance/protocol_collision_avoidance.md)
 * Opto-Motor Response (OMR)
 * Pre-Pulse Inhibition (PPI)
 * Acoustic Habituation
