@@ -1,7 +1,7 @@
-# Collision Avoidance
+# Visual Collision Avoidance
 
 * [Protocol](protocol_collision_avoidance.md)
-* Stimulation program: [code](/stimulation/collision.html), [working link](http://faculty.bard.edu/~akhakhal/progs/collision.html)
+* Stimulation program: [code](https://github.com/khakhalin/Xenopus-Behavior/blob/master/02_Collision_Avoidance/stimulation/collision.html), [working link](http://faculty.bard.edu/~akhakhal/progs/collision.html)
 
 ## References
 
