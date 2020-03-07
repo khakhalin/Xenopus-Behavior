@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html> 
+	<head> 
+		<script src="../p5/p5.js"></script>
+		<script src="../p5/addons/p5.dom.js"></script>		
+		<script src="../p5/addons/p5.sound.js"></script>
+		<META name="author" content="Arseny Khakhalin">
+		<META name="contact" content="khakhalin@gmail.com">
+		<meta name="description" content="Multisensory test, ability to change contrast">
+	</head>
+	<body>
+	<div id="left" style="float:left; width:230px; background-color:rgb(160,160,160); font-size:10pt; font-family:Arial">
+		<p>Period (entire sequence), s:		<input type="text" id="my_period" value = "30" size=3 style="float:right; margin-right:5px"/></p>
+		<p>Background color (0 to 255):		<input type="text" id="my_background" value = "120" size=3 style="float:right; margin-right:5px"/></p>
+		<p>Number of grid rows:				<input type="text" id="my_gridDim" value = "24" size=3 style="float:right; margin-right:5px"/></p>
+		<p>Number of events:				<input type="text" id="my_gridN" value = "1" size=3 style="float:right; margin-right:5px"/></p>
+		<p>Event length(S), ms:				<input type="text" id="my_gridPeriod" value = "500" size=3 style="float:right; margin-right:5px"/></p>
+		<p>Contrast, %: <b>CYCLE</b><br>		<input type="text" id="my_contrast" value = "10 30"/></p>
+		<input type="radio" name="stimMode" value="F"> Flash<br/>
+		<input type="radio" name="stimMode" value="R"> Ramp<br/>
+		<input type="radio" name="stimMode" value="C" checked> Corner<br/>
+		<input type="radio" name="stimMode" value="AC"> Anti-Corner<br/>
+		<input type="radio" name="stimMode" value="D" > Dense<br/>
+		<input type="radio" name="stimMode" value="T" > Trippy<br/>
+		<input type="radio" name="stimMode" value="S"> Swirl<br/>
+		<input type="radio" name="stimMode" value="MS"> Monoswirl
+		<p><b>Multisensory:</b><br/>
+		Make sound? 
+		<input type="checkbox" id="my_flagSound" checked/></p>
+		<p>Volume, %:
+		<input type="text" id="my_volume" value = "10" size=3 style="float:right; margin-right:5px"/></p>
+		<p>Vis to Au ISI, ms:
+		<input type="text" id="my_isi" value = "100" size=3 style="float:right; margin-right:5px"/></p>
+		<p>Show countdown? <input type="checkbox" id="my_flagShowNumbers" checked/></p>
+		<p><button onclick="resetTrials()">Start anew</button></p>		
+		<div id="cycleNumber">Cycle: initialized</div>
+		<div id="actualisi"> </div>
+		<div id="timeToFlash"></div>
+		<div id="console"></div>
+	</div>
+	<div id="viz5" >
+	<script type="text/javascript">
+	/*
+	Code by Arseny Khakhalin, Bard College
+	https://sites.google.com/site/khakhalin/
+	khakhalin@gmail.com
+	Version: Jun 30 2016
+	*/
+	
+	var my = {
+		/* Here "Dynamic" variables change all the time, "Parameters" are taken from the form, "Constants" are constants */
+		status: 0,			// Flag, set to 1 when it's time to flash. Dynamic
+		period: 1000, 
+		csize: 600,
+		counter: -1,		// Number of this flash. Dynamic	
+		counterSound: -1,	// Number of this sound. We have a special counter as sounds sometimes happen before visuals. Dynamic
+		start: 0,			// Moment when the trial started. Dynamic
+		startSound: 0,		// Moment when the sound was started. Dynamic
+		flagShowNumbers: 1, // Whether debugging numbers are to be shown. Parameter
+		color: 0,
+		background: 255,
+		stimMode: "F",		// Stimulus mode. Parameter
+		gridPeriod: 50,		// Length of stimulus transition. Parameters
+		contrastArray: 50, 	// Array of values to cycle through. Parameter
+		gridN: 10,			// How many times to change the grid back and forth during each event. Parameter
+		gridDim: 10,		// Grid dimensions (number of rows). Parameter
+		contrast: 50,		// Grid contrast; 100 for full constrast, 0 for none. Parameter
+		gridInstance: 0,	// Which grid (within a train) we are now showing. Dynamic
+		flagSound: 0,
+		soundNow: 0,		// Whether sound is to be played during this trial. Dynamic
+		freq: 100,
+		volume: 0.2,		// Sound volume. Parameter
+		oscOn: 0,			// Whether the sound is on right now. Dynamic
+		isi: 0,				// Current official recommended isi. Parameter
+		actualIsi: 0,		// Actual ISI governed by ISI cycling. Dynamic
+		soundLength: 10,	// Sound length in ms. Constant.
+		oscTime: 0			// Relative time around when the sound should be started (0 is when it is to be started). Dynamic
+		}
+	
+	function setup() {	  
+		myCanvas = createCanvas(my.csize, my.csize);
+		myCanvas.parent('viz5');
+		stroke(1);
+		fill(0);
+		//translate(my.csize/2,my.csize/2);
+		
+		osc = new p5.Oscillator(); 	osc.setType('sawtooth');  osc.start();  osc.freq(my.freq);  osc.amp(0); osc.pan(1); osc.phase(0.25); 
+		osc2 = new p5.Oscillator(); osc2.setType('sawtooth'); osc2.start(); osc2.freq(my.freq); osc2.amp(0); osc2.pan(-1); osc2.phase(0.75); 		
+		var temp = hilbert(6,'u');	
+		hil = dehil(temp,6);
+	}
+
+	function draw() {
+		my.period = max(1,document.getElementById('my_period').value*1000); 		if(isNaN(my.period)) my.period = 20;
+		my.background = max(1,document.getElementById('my_background').value); 		if(isNaN(my.background)) my.background = 255;
+		my.gridN = max(1,document.getElementById('my_gridN').value);				if(isNaN(my.gridN)) my.gridN = 24;
+		var temp = document.getElementById('my_contrast').value;			// Grab the array (potentially)
+		if(temp.indexOf(" ")>0) {											// Two or more values
+			my.contrastArray = temp.split(" ");								// Contrast is set elsewhere (below, at the beginning of each event)
+		}
+		else {																// One value only
+			my.contrast = max(1,temp);			if(isNaN(my.contrast)) my.contrast = 30;
+			my.contrastArray = [my.contrast];
+		}
+		my.gridPeriod = max(1,document.getElementById('my_gridPeriod').value);		if(isNaN(my.gridPeriod)) my.gridPeriod = 500;
+		my.gridDim = max(1,document.getElementById('my_gridDim').value);			if(isNaN(my.gridDim)) my.gridDim = 24;
+		my.volume = max(0,min(1,document.getElementById('my_volume').value/100));		if(isNaN(my.volume)) my.volume = 0.15;
+		if(document.getElementById('my_flagSound').checked) {my.flagSound = 1;} else {my.flagSound = 0;}
+		if(document.getElementById('my_flagShowNumbers').checked) {my.mflagShowNumbers = 1;} else {my.mflagShowNumbers = 0;}		
+		my.isi = floor(document.getElementById('my_isi').value); 					if(isNaN(my.isi)) my.isi = 0;	
+		
+		var radios = document.getElementsByName('stimMode');
+		for (var i = 0, length = radios.length; i < length; i++) {
+			if (radios[i].checked) {
+				my.stimMode = radios[i].value;
+				break;
+			}
+		}
+		
+		document.body.style.backgroundColor = 'rgb('+my.background+','+my.background+','+my.background+')';
+		background(my.background);
+		fill(my.color);
+		htmlSet("timeToFlash","Time to flash: " + (1+floor((my.start + my.period-millis())/1000)));
+		htmlSet("actualisi","Expected ISI: " + my.actualIsi);
+			  
+		if(millis()-my.start >= my.period) {				// Time to present the stimulus
+			my.counter++;									// Count this instance
+			my.start = millis();							// Time when this period started
+			htmlSet("cycleNumber","Cycle: " + my.counterSound);
+			if(my.counter % (my.contrastArray.length*2+1) == 0) {	// First in a set: no visuals, only sound
+				my.status = 0;									// No visuals
+				my.contrast = NaN;								// Kinda not defined
+			}
+			else {
+				var temp = floor(((my.counter % (my.contrastArray.length*2+1))-1) / 2);	// Where are we within set?				
+				my.contrast = max(1,my.contrastArray[temp]);	// Repeat each contrast from a list twice (once without sound, and once with it)
+				htmlSet("console",my.contrast);
+				cornerMode = floor(random(4));					// In which direction the corners will grow						
+				my.status = 1;									// Switch to "show the stimulus" mode				
+				}
+		}
+		
+		if(my.status===1) { 								// If it's OK to be showing the stimulus
+			my.gridInstance = floor((millis()-my.start)/my.gridPeriod);			// Which grid within a train?
+			drawGrid(my.gridInstance, (millis()-my.start)/my.gridPeriod-my.gridInstance);	// Communicate both the instance, and how long are we into it
+			if(my.gridInstance>=my.gridN) {					// Time to stop; switch the stimulation off
+				my.status = 0;			
+			}
+		}
+		
+		if(my.flagSound) { 										// Sound is to be played (in general)
+			my.oscTime = millis()-(my.start+my.period*(1+my.counterSound-my.counter)+my.isi);	// Time since next stimulus; works for ISIs of both signs			
+			if(my.oscOn) { 										// Playing - check if sound needs to be turned off		
+				if(millis()-my.startSound >= my.soundLength) {	// Time to turn off
+					osc.amp(0); osc2.amp(0);
+					my.oscOn = 0;					
+				}
+			}
+			else { 												// Not playing - check if sound needs to be turned on		
+				if(my.oscTime>=0) {								// Time to turn on
+					my.counterSound++;							// Count this sound as "done"
+					my.startSound = millis();
+					my.oscOn = 1;								// Mark that sound is on now (either real or "virtual")
+					// But shoudl sound be actually played on this trial?
+					if(my.counterSound % (my.contrastArray.length*2+1) == 0) {	// Whether sound is played on this trial
+						my.soundNow = 1;									// First trial in a set: always sound, no visual
+					}
+					else {													// Later - only on even trials (these always have visual)
+						if((my.counterSound % (my.contrastArray.length*2+1)-1) % 2 == 0)	{my.soundNow = 0;}
+						else {my.soundNow = 1;}
+					}
+					if(my.soundNow) {							// Sound is to be played on this trial
+						osc.amp(my.volume); osc2.amp(my.volume);// Actually turn the sound on (otherwise it would be a virtual sound)
+						}					
+				}
+			}
+		}
+		else {
+			my.counterSound = my.counter;						// If no sound - assume that it kinda silently happens in sync
+		}
+		
+		htmlSet("console"," c=" + my.contrast + " s=" + my.soundNow);	// Information in the form		
+		if(my.mflagShowNumbers) {										// Information on the projected screen 
+			stroke(255); noFill(); strokeWeight(0.5);			
+			push(); scale(-1,1);
+			stroke(0); textSize(24); fill(0); noStroke();
+			text(my.counter + " c=" + my.contrast + " s=" + my.soundNow + " t=" + (1+floor((my.start + my.period-millis())/1000)),-my.csize*0.8,my.csize*4/5);
+			pop();
+		}		
+	}
+	
+	
+	function drawGrid(instance, t) { 	// Which grid intance, and how long are we into it
+		var colorDark = my.background-my.background*my.contrast/100;
+		var colorLite = my.background+(255-my.background)*my.contrast/100;
+		
+		if(my.stimMode === "R") {								// Ramp is the only mode in which colors need to be gradually transitioned
+			if(instance===1) {
+				colorDark = my.background*(1-t)+colorDark*t;	// Slowly ramp towards the target color
+				colorLite = my.background*(1-t)+colorLite*t;
+			}
+			else {
+				var temp = colorDark;
+				colorDark = colorLite*(1-t)+colorDark*t;		// Slowly move between the colors
+				colorLite =      temp*(1-t)+colorLite*t;
+			}
+		}
+		
+		switch(my.stimMode) {									// Set colors for all graphics elements
+			case "AC":
+			case "T":
+			case "MS":
+				background(colorLite);
+				fill(colorDark);
+				break;
+			case "D":		
+			case "S":			
+				if(instance % 2 === 0)  {
+					background(colorLite);
+					fill(colorDark);
+				}
+				else {
+					background(colorDark);
+					fill(colorLite);
+				}
+				break;
+			default:
+				background(colorDark);
+				fill(colorLite);				
+		}
+		push();
+		noStroke();
+		
+		//translate(-my.csize/2,-my.csize/2); 					// Now actual drawing
+		var d = my.csize/my.gridDim;
+		for(var ix=0; ix<my.gridDim; ix++) {
+			for(var iy=0; iy<my.gridDim; iy++) {				
+				if((instance + ix + iy) % 2 === 1) { 			// For most modes drawing half of shapes is enough						
+					switch(my.stimMode) {
+						case "F":
+						case "R":								
+							rect(ix*d,iy*d, d, d);
+							break;
+						case "C":
+							switch(cornerMode) {
+								case 0: rect(ix*d,iy*d, d*t, d*t);	break;
+								case 1: rect(ix*d+d*(1-t),iy*d+d*(1-t), d*t, d*t);	break;
+								case 2: rect(ix*d,iy*d+d*(1-t), d*t, d*t);	break;
+								case 3: rect(ix*d+d*(1-t),iy*d, d*t, d*t);	break;
+							}
+							break;
+						case "AC":								
+							rect(ix*d,iy*d, d*t, d*t);
+							break;
+						case "D":
+							ellipse((ix+1/2)*d,(iy+1/2)*d, d*t, d*t);
+							break;
+						case "T":
+							rect((ix-t/2+1/2)*d,(iy-t/2+1/2)*d, d*t, d*t);
+							break;
+						case "S":
+						case "MS":
+							var dir = hil[ix*64 + iy];							
+							var es = (1-abs(2*t-1))*d*0.8;
+							//var es = t*d;
+							switch(dir) {
+								case 0: ellipse((ix+t)*d,iy*d, es, es); break;
+								case 1: ellipse((ix)*d,(iy+t)*d, es, es); break;
+								case 2: ellipse((ix-t)*d,iy*d, es, es); break;
+								case 3: ellipse((ix)*d,(iy-t)*d, es, es); break;								
+							}
+							break;
+					}
+				}
+				else {											// In some modes the other half needs to be drawn as well
+					switch(my.stimMode){
+						case "D":
+							ellipse((ix+1/2)*d,(iy+1/2)*d, d*t, d*t);
+							break;
+						case "T":
+							rect((ix-(1-t)/2+1/2)*d,(iy-(1-t)/2+1/2)*d, d*(1-t), d*(1-t));
+							break;
+						case "S":
+						case "MS":
+							var dir = hil[ix*64 + iy];							
+							//var es = (1-abs(2*t-1))*d;
+							var es = t*d*0.8;
+							switch(dir) {
+								case 0: ellipse((ix+t)*d,iy*d, es, es); break;
+								case 1: ellipse((ix)*d,(iy+t)*d, es, es); break;
+								case 2: ellipse((ix-t)*d,iy*d, es, es); break;
+								case 3: ellipse((ix)*d,(iy-t)*d, es, es); break;								
+							}
+							break;
+						default:
+							//nothing
+					}
+				}
+			}
+		}
+		pop();
+	}
+		
+		
+	function resetTrials() {
+		my.counter = -1;
+		my.counterSound = 0;
+		my.start = millis();
+		htmlSet("cycleNumber","Cycle: " + my.counter);
+	}
+	
+	function keyPressed() {
+	}
+	
+	function keyReleased() {
+	}
+
+	function htmlSet(name,s) {
+		document.getElementById(name).innerHTML = s;
+	}
+	
+		function htmlAdd(name,s) {
+		var theDiv = document.getElementById(name);
+		var content = document.createTextNode(s);
+		theDiv.appendChild(content);
+		theDiv.appendChild(document.createElement("br"));
+	}
+		
+	
+	function  hilbert(order,direction) { // Hilbert curve of n-th order		
+		var result = [];
+		var r = 0;
+		var d = 1;
+		var l = 2;
+		var u = 3;
+		if(order===1) {
+			switch(direction) {
+				case 'u': result = [u,r,d]; break;
+				case 'r': result = [r,u,l]; break;
+				case 'd': result = [d,l,u]; break;
+				case 'l': result = [l,d,r]; break;
+			}
+		}
+		else {
+			var p = hilbert(order-1,'u');
+			var a = hilbert(order-1,'r');
+			var c = hilbert(order-1,'l');
+			var v = hilbert(order-1,'d');
+			switch(direction) {
+				case 'u':
+					result = result.concat(a,u,p,r,p,d,c);					
+					break;
+				case 'r':
+					result = result.concat(p,r,a,u,a,l,v);
+					break;
+				case 'd':
+					result = result.concat(c,d,v,l,v,u,a);
+					break;
+				case 'l':
+					result = result.concat(v,l,c,d,c,r,p);
+					break;
+			}
+		}
+		//for(var i=1; i<n*n; i++) {hil.push(floor(random(4)));} // Debugging stub
+		//htmlAdd('console','Out ' + order + " " + direction);
+		//htmlAdd('console',result);
+		return(result);		
+	}
+	
+	function dehil(hil,order) { // Maps hilbert instructions onto XY
+		var n = Math.pow(2,order);
+		var result = [];
+		var x = 0;
+		var y = 0;
+		var c = 0; // current index
+		for(var i=0; i<n*n; i++) {
+			c = x*n+y;
+			result[c] = hil[i];
+			switch(hil[i]) {
+				case 0: x++; break;
+				case 1: y++; break;
+				case 2: x--; break;
+				case 3: y--; break;
+				}
+			}		
+		return(result);
+	}
+	
+    </script>       
+    </div>
+    
+	</body> 
+</html> 

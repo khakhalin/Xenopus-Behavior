@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html> 
+	<head> 
+		<script src="../p5/p5.js"></script>
+		<script src="../p5/addons/p5.dom.js"></script>		
+		<script src="../p5/addons/p5.sound.js"></script>
+		<META name="author" content="Arseny Khakhalin">
+		<META name="contact" content="khakhalin@gmail.com">
+		<meta name="description" content="Optomotor Response with bars that are made out of noise (fancy, strange)">
+	</head>
+	<body>
+	<div id="left" style="float:left; width:200">
+		<p>Number of stripes:<br/>
+		<input type="text" id="my_n" value="5"/></p>
+		<p>Period, ms:<br/>
+		<input type="text" id="my_period" value = "7000"/></p>
+		<p>Direction right? 
+		<input type="checkbox" id="my_right" checked/></p>
+		<p>Angle of 60 degrees? 
+		<input type="checkbox" id="my_angle"/></p>
+		<p>Grain size, px:<br/>
+		<input type="text" id="my_grain" value="4"/></p>
+	</div>
+	<div id="viz5"></div>
+	<script type="text/javascript">
+	
+	var my = {canvas_size: 600, 
+			"period": 3000, 
+			"x": 20,
+			"n": 4,
+			"width": 0,
+			"rotated": 0,
+			"angle": 0,
+			"grain": 3};
+	
+	function setup() {	  
+		myCanvas = createCanvas(my.canvas_size, my.canvas_size);
+		myCanvas.position(300, 50);
+		stroke(0);
+		fill(0);		
+	}
+
+	function draw() {
+		my.n = max(1,floor(document.getElementById('my_n').value));
+		if(isNaN(my.n)) my.n = 1;
+		my.period = max(1,document.getElementById('my_period').value);
+		if(isNaN(my.period)) my.period = 1000;
+		
+		if(my.width != round(my.canvas_size / my.n / 2) || my.grain != round(document.getElementById('my_grain').value)) {
+			my.grain = floor(document.getElementById('my_grain').value);
+			if(my.grain==0) my.grain = 20;
+			if(isNaN(my.grain)) my.grain = 20;
+			my.width = round(my.canvas_size / my.n / 2);
+			img_fore = createImage(my.width, my.canvas_size+400);
+			for(i=0; i<img_fore.width; i=i+my.grain)
+				for(j=0; j<img_fore.height; j=j+my.grain) {
+					temp = 255*round(random());
+					for(ii=0; ii<my.grain; ii++)
+						for(jj=0; jj<my.grain; jj++)
+							img_fore.set(i+ii,j+jj,temp);
+					}
+			img_fore.updatePixels();
+
+			img_back = createImage(my.canvas_size, my.canvas_size);
+			for(i=0; i<img_back.width; i=i+my.grain)
+				for(j=0; j<img_back.height; j=j+my.grain) {
+					temp = 255*round(random());
+					for(ii=0; ii<my.grain; ii++)
+						for(jj=0; jj<my.grain; jj++)
+							img_back.set(i+ii,j+jj,temp);
+					}
+			img_back.updatePixels();
+			}
+			
+		background(255,255,255);
+		image(img_back,0,0);
+		
+		if(document.getElementById('my_angle').checked)	{
+				if(document.getElementById('my_right').checked)
+					my.angle = -PI/6.0;
+				else
+					my.angle = PI/6.0;
+				rotate(my.angle);
+				translate(my.canvas_size/2*(cos(my.angle)+sin(my.angle)-1),my.canvas_size/2*(-sin(my.angle)+cos(my.angle)-1));
+			}
+		for(iBar=0; iBar< my.n ; iBar++) {
+			if(document.getElementById('my_right').checked)
+				my.x = round(my.canvas_size*(millis()/my.period) + my.width*iBar*2) % my.canvas_size;
+			else
+				my.x = my.canvas_size - round(my.canvas_size*(millis()/my.period) + my.width*iBar*2) % my.canvas_size;
+			
+			// rect(my.x,-100,my.width,my.canvas_size+200);
+			image(img_fore,my.x,-200);
+			image(img_fore,my.x - my.canvas_size,-200);
+			image(img_fore,my.x + my.canvas_size,-200);
+			}
+		// push();
+		// fill("red");
+		// ellipse(my.canvas_size/2,my.canvas_size/2,10,10);
+		// fill(0,0);
+		// stroke("red"); ellipse(0,0,my.canvas_size,my.canvas_size);
+		// pop();
+	}
+	
+	function rect2(x,y,w,h) {
+		push();
+		noStroke();
+		for(j=0; j<w/5 ; j++) 
+			for(k=0; k<h/5 ; k++) {
+				fill(255*round(random()));
+				rect(x+j*5,y+k*5,5,5);				}
+		pop();
+	}
+	
+    </script>       
+        
+    
+	</body> 
+</html> 

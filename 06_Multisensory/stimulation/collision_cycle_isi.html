@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html> 
+	<head> 
+		<script src="../p5/p5.js"></script>
+		<script src="../p5/addons/p5.dom.js"></script>
+		<script src="../p5/addons/p5.sound.js"></script>
+		<META name="author" content="Arseny Khakhalin">
+		<META name="contact" content="khakhalin@gmail.com">
+		<meta name="description" content="Visual collision, multisensory, and cycling through different ISI values">
+	</head>
+	<body>
+	<div id="container" style="">
+	<div id="left" style="width:200px; display:inline-block; *display: inline; vertical-align: top">
+		<p>Dish radius, px:<br/>
+		<input type="text" id="my_bigR" value = "200"/></p>
+		<p>Background (255 to 0):<br/>
+		<input type="text" id="my_backColor" value = "160"/></p>
+		<p>Dead time, s:<br/>
+		<input type="text" id="my_deadTime" value = "20"/></p>
+		<p>Dot Travel Time, ms:<br/>
+		<input type="text" id="my_travelTime" value = "2500"/></p>
+		<p>Dot radius, px:<br/>
+		<input type="text" id="my_size" value = "8"/></p>
+		<p>Make sound? 
+		<input type="checkbox" id="my_sound"/></p>
+		<p>Sound volume (0 to 1):<br/>
+		<input type="text" id="my_volume" value = "0.15"/></p>	
+		<p>Sound-border ISI, ms:<br/>
+		<input type="text" id="my_isi" value = "100"/></p>
+		<p>Cycle ISI?
+		<input type="checkbox" id="my_cycleIsi" checked/></p>
+		<p><button onclick="resetTrials()">Reset trials</button></p>
+		<div id="div_counter"> </div>
+		<div id="div_isiType"> </div>
+		<div id="div_timer"> </div>
+		<div id="div_fps"> </div>
+	</div>
+	<div id="viz5" style="width:700px; display:inline-block; *display: inline; vertical-align: top;">
+	<script type="text/javascript">
+	
+	var my = {"period": 1000, 
+          "x": 0,
+          "y": 0,
+          "r": 0,
+          "csize": 600,		// Canvas size. Constant.
+		  "bigR": 250,		// Dish size. Parameter.
+          "status": 0,		// Seems to be == 1 all the time. When ==1, the dot is shown.
+		  "dot_counter": 0,
+		  "secondsPassed": 0,	// For FPS calculations
+		  "frameStart": 0,
+          "start": 0,		// tic for when the dot is sent
+          "size": 30,		// Dot size. Parameter
+          "angle": 0,		// Target angle. Dynamic.
+          "angleSpeed": 0,	// Current angle speed (is reset by key presses). Dynamic.
+		  "travelTime": 1000,	// Time travel in ms. Parameter.
+		  "deadTime": 5,	// How many seconds to wait from dot to dot. Parameter.
+		  "flag_sound": 0,		// Flag for whether sound is to be played
+		  "freq": 100,		// Oscillator frequency, Hz. Constant.
+		  volume: 0.15,		// Oscillator volume. Parameter
+		  "oscOn": 0,		// Osc is currently on.
+		  "oscLegal": 0,	// It is legal to turn Osc on.
+		  "isi": 0,			// Collision-to-sound inter-stimulus interval, ms. Parameter.
+		  cycleIsi: 0,		// Whether ISIs need to be cycled (positive, negative, zero). Parameter
+		  actualIsi: 0,		// Actual ISI governed by ISI cycling. Dynamic
+		  "soundLength": 10,// Sound length in ms. Constant.
+		  "oscTime": 0,		// Relative time around when the sound should be started (0 is when it is to be started) - dynamic variable
+		  "backColor": 255	// Background color
+          }
+	
+	
+	function setup() {	  
+		myCanvas = createCanvas(my.csize, my.csize);
+		myCanvas.parent('viz5');
+		//myCanvas.position(300, 50);
+		stroke(1);
+		fill(0);
+	}
+	
+	
+	function startOscillators(){
+		if (typeof osc !== 'undefined') {
+			delete osc;
+			delete osc2;
+			}
+		osc = new p5.SawOsc(); osc.freq(my.freq); osc.pan(1); osc.phase(0.25); osc.amp(0);
+		osc2 = new p5.SawOsc(); osc2.freq(my.freq); osc2.pan(-1); osc2.phase(0.75); osc2.amp(0);
+		osc.start();
+		osc2.start(); 
+		}
+
+	
+	function draw() {
+		my.bigR = max(1,floor(document.getElementById('my_bigR').value)); if(isNaN(my.bigR)) my.bigR = 1;
+		my.travelTime = max(1,floor(document.getElementById('my_travelTime').value)); if(isNaN(my.travelTime)) my.travelTime = 1000;	
+		my.deadTime = max(1,floor(document.getElementById('my_deadTime').value)); if(isNaN(my.deadTime)) my.deadTime = 20;	
+		my.size = max(1,floor(document.getElementById('my_size').value)); if(isNaN(my.size)) my.size = 15;
+		my.isi = floor(document.getElementById('my_isi').value); if(isNaN(my.isi)) my.isi = 0;
+		my.volume = min(1,max(0,document.getElementById('my_volume').value)); if(isNaN(my.volume)) my.volume = 0.15;
+		if(document.getElementById('my_cycleIsi').checked) {my.cycleIsi = 1;} else {my.cycleIsi = 0;}		
+		my.backColor = min(255,max(0,floor(document.getElementById('my_backColor').value))); if(isNaN(my.size)) my.size = 15;
+		if(document.getElementById('my_sound').checked) {
+			if(my.flag_sound==0) { // If just turned on..
+				startOscillators(); // use this opportunity to attempt restarting faulty oscillators
+				}
+			my.flag_sound = 1;
+			} 
+		else {
+			my.flag_sound = 0;
+			}
+
+		background(my.backColor);
+		translate(my.csize/2,my.csize/2);
+		fill(my.backColor); stroke(1); // For the dish and target
+		ellipse(0,0,my.bigR*2,my.bigR*2);	   
+		fill(0);
+	  
+	  if(my.status) { // Display the dot travels
+		tempTime = (millis()-my.start)/my.travelTime; // How far is the dot from the center
+		if(tempTime > 3) {tempTime = 0; fill(my.backColor*0.9);}
+		else if(tempTime > 2) {tempTime = 1-(tempTime-2); fill(my.backColor*0.9);}
+		else if(tempTime > 1) {tempTime = 1; fill(0);}
+		else {fill(0);}
+	    my.r = tempTime*(my.bigR-my.size-5);
+	  }
+	  if(millis()-my.start >= my.deadTime*1000) { // Can ungray it now
+		fill(0);
+		}
+	  
+	  my.angle = my.angle+my.angleSpeed;
+	  my.x = my.r*cos(my.angle);
+	  my.y = my.r*sin(my.angle);	  
+	  line(my.bigR*cos(my.angle),my.bigR*sin(my.angle),(my.bigR+20)*cos(my.angle),(my.bigR+20)*sin(my.angle));
+	  
+	  noStroke(); // For the dot	  
+	  ellipse(my.x,my.y,my.size*2,my.size*2);
+	  htmlSet("div_timer","Seconds passed: " + round((millis()-my.start)/1000));
+	  htmlSet("div_counter","Dot # " + my.dot_counter);
+	  
+	  if(my.flag_sound) { // Sound can be played
+		my.oscTime = millis()-my.start-(my.travelTime+my.actualIsi)
+		if(my.oscOn) { // Playing - check if needs to be turned off		
+			if(my.oscTime>=my.soundLength) {
+				osc.amp(0); osc2.amp(0);
+				my.oscOn = 0;
+				my.oscLegal = 0;
+				}
+			}
+		else { // Not playing - check if needs to be turned on
+			if(my.oscLegal) {
+				if(my.oscTime>=0) {
+					osc.amp(my.volume); osc2.amp(my.volume);
+					my.oscOn = 1;
+					}
+				}
+			}
+		}
+		
+	// FPS counter
+	if(floor(millis()/1000) > my.secondsPassed) {
+		my.secondsPassed++;
+		htmlSet('div_fps',"FPS: " + String(frameCount-my.frameStart));
+		my.frameStart = frameCount;
+	}
+	}
+	
+	
+	function resetTrials() {
+		my.dot_counter = 0;
+		}
+	
+	function keyPressed() {
+		if(keyCode == UP_ARROW){ 				// Send the dot
+			my.status = 1;
+			my.start = millis();
+			my.dot_counter++;
+			my.oscLegal = 1; 			// Sound can now be played (if desired)
+			if(my.cycleIsi) {			// If needs to be cycled
+				switch(my.dot_counter % 3) { // Depending on dot#, cycle the ISIs
+					case 0:
+						my.actualIsi = abs(my.isi);
+						htmlSet('div_isiType',"Positive ISI: " + my.actualIsi);
+						break;
+					case 1:
+						my.actualIsi = -abs(my.isi);
+						htmlSet('div_isiType',"Negative ISI: " + my.actualIsi);
+						break;
+					case 2:
+						my.actualIsi = 0;
+						htmlSet('div_isiType',"Zero ISI: " + my.actualIsi);
+						break;
+					}
+				}
+			else {
+				my.actualIsi = my.isi;	// Default
+				htmlSet('div_isiType',"ISI: " + my.actualIsi);
+				}
+			}
+		if(keyCode == DOWN_ARROW){ // Re-center the dot
+			my.status = 0;		// Hide dot	    
+			my.oscLegal = 0; 	// No sound
+			my.r = 0;
+			}
+		if(keyCode === LEFT_ARROW) {
+			my.angleSpeed = PI/180*2;
+			}
+		if (keyCode === RIGHT_ARROW) {
+			my.angleSpeed = -PI/180*2;
+			}
+	}
+	
+	function keyReleased() {
+	  my.angleSpeed = 0;
+	}
+	
+	function htmlSet(name,s) {
+		document.getElementById(name).innerHTML = s;
+		}	
+	
+    </script>       
+    </div>
+	</div>
+	</body> 
+</html> 

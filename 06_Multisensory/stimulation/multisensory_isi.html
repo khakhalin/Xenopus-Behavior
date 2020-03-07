@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html> 
+	<head> 
+		<script src="../p5/p5.js"></script>
+		<script src="../p5/addons/p5.dom.js"></script>		
+		<script src="../p5/addons/p5.sound.js"></script>
+		<META name="author" content="Arseny Khakhalin">
+		<META name="contact" content="khakhalin@gmail.com">
+		<meta name="description" content="Multisensory with cycling through different ISIs">
+	</head>
+	<body>
+	<div id="left" style="float:left; width:300px">
+		<p>Period (entire sequence), s:<br/>
+		<input type="text" id="my_period" value = "30"/></p>
+		<p>Background color (0 to 255):<br/>
+		<input type="text" id="my_background" value = "160"/></p>
+		<p>Make sound? 
+		<input type="checkbox" id="my_flagSound"/></p>
+		<p>Volume (0 to 1):<br/>
+		<input type="text" id="my_volume" value = "0.15"/></p>
+		<p><b>Grid properties:</b></p>
+		<p>Number of grid rows:<br/>
+		<input type="text" id="my_gridDim" value = "12"/></p>
+		<p>Number of flashes:<br/>
+		<input type="text" id="my_gridN" value = "5"/></p>
+		<p>Delay between flashes, ms:<br/>
+		<input type="text" id="my_gridPeriod" value = "12"/></p>
+		<p><b>Multisensory:</b></p>
+		<p>Vis to Au ISI, ms:<br/>
+		<input type="text" id="my_isi" value = "100"/></p>
+		<p><button onclick="resetTrials()">Start anew</button></p>
+		<div id="cycleNumber">Cycle: initialized</div>
+		<div id="actualisi"> </div>
+		<div id="timeToFlash"></div>
+		<div id="console"></div>
+	</div>
+	<div id="viz5" ><p>&nbsp;</p>
+	<script type="text/javascript">
+	/* todos:
+	Add warnings at the lower left corner maybe? As the timer goes down?
+	*/
+	
+	var my = {
+		status: 0,			// Flag, set to 1 when it's time to flash. Dynamic
+		period: 1000, 
+		csize: 600,
+		counter: 0,			// Number of this flash. Dynamic	
+		counterSound: 0,	// Number of this sound. Dynamic
+		start: 0,			// Moment when the trial started. Dynamic
+		color: 0,
+		background: 255,
+		gridPeriod: 50,
+		gridN: 10,
+		gridDim: 10,
+		flagSound: 0,
+		freq: 100,
+		volume: 0.2,
+		oscOn: 0,			// Whether the sound is on right now. Dynamic
+		isi: 0,			// Current official recommended isi. Parameter
+		actualIsi: 0,		// Actual ISI governed by ISI cycling. Dynamic
+		soundLength: 10,	// Sound length in ms. Constant.
+		oscTime: 0		// Relative time around when the sound should be started (0 is when it is to be started). Dynamic
+		}
+	
+	function setup() {	  
+		myCanvas = createCanvas(my.csize, my.csize);
+		stroke(1);
+		fill(0);
+		translate(my.csize/2,my.csize/2);
+		
+		osc = new p5.Oscillator(); 	osc.setType('sawtooth');  osc.start();  osc.freq(my.freq);  osc.amp(0); osc.pan(1); osc.phase(0.25); 
+		osc2 = new p5.Oscillator(); osc2.setType('sawtooth'); osc2.start(); osc2.freq(my.freq); osc2.amp(0); osc2.pan(-1); osc2.phase(0.75); 
+		}
+
+	function draw() {
+		my.period = max(1,document.getElementById('my_period').value*1000); 				if(isNaN(my.period)) my.period = 20;
+		my.background = max(1,document.getElementById('my_background').value); 		if(isNaN(my.background)) my.background = 255;
+		my.gridN = max(1,document.getElementById('my_gridN').value);				if(isNaN(my.gridN)) my.gridN = 2;
+		my.gridDim = max(1,document.getElementById('my_gridDim').value);			if(isNaN(my.gridDim)) my.gridDim = 2;
+		my.gridPeriod = max(1,document.getElementById('my_gridPeriod').value);		if(isNaN(my.gridPeriod)) my.gridPeriod = 50;
+		my.volume = max(0,min(1,document.getElementById('my_volume').value));		if(isNaN(my.volume)) my.volume = 0.15;
+		if(document.getElementById('my_flagSound').checked) {my.flagSound = 1;} else {my.flagSound = 0;}
+		my.isi = floor(document.getElementById('my_isi').value); 					if(isNaN(my.isi)) my.isi = 0;
+	
+		background(my.background);
+		fill(my.color);
+		
+		htmlSet("timeToFlash","Time to flash: " + (1+floor((my.start + my.period-millis())/1000)));
+		htmlSet("actualisi","Expected ISI: " + my.actualIsi);
+	  
+		if(millis()-my.start >= my.period) {
+			my.counter++;
+			if(!my.flagSound) {
+				my.counterSound = my.counter;				// If no sound - assume that it kinda silently happens in sync
+				}
+			htmlSet("cycleNumber","Cycle: " + my.counter);
+			my.status = 1;
+			my.start = millis();							// Time when this period started
+			}
+		
+		if(my.status===1) { 			// Time to flash some grids
+			grid_instance = floor((millis()-my.start)/my.gridPeriod);
+			drawGrid(grid_instance);
+			if(grid_instance>=my.gridN) {
+				my.status = 0;			
+				}
+			}
+			
+		switch(my.counterSound % 3) {
+			case 0:
+				my.actualIsi = 0;
+				break;
+			case 1:
+				my.actualIsi = my.isi;
+				break;
+			case 2:
+				my.actualIsi = -my.isi;
+				break;
+			}
+			
+		if(my.flagSound) { 				// Sound can be played
+			my.oscTime = millis()-(my.start+my.period*(1+my.counterSound-my.counter)+my.actualIsi);	// Very clever formula that works for ISIs of both signs
+			//htmlSet("console",round(my.oscTime));
+			//htmlSet("console",round(my.soundStart));			
+			if(my.oscOn) { 				// Playing - check if sound needs to be turned off		
+				if(my.oscTime>=my.soundLength) {	// Time to turn off
+					osc.amp(0); osc2.amp(0);
+					my.oscOn = 0;
+					my.counterSound++;
+					//htmlSet("console","Sound OFF");
+					}
+				}
+			else { 						// Not playing - check if sound needs to be turned on		
+				if(my.oscTime>=0) {		// Time to turn on
+					osc.amp(my.volume); osc2.amp(my.volume);
+					my.oscOn = 1;
+					//htmlSet("console","<h1>Sound ON</h1>");
+					}
+				}
+			}
+		}
+	
+	
+	function drawGrid(instance) {
+		push();
+		noStroke();
+		translate(-my.csize/2,-my.csize/2);
+		d = my.csize/my.gridDim;
+		for(ix=0; ix<my.gridDim; ix++) 
+			for(iy=0; iy<my.gridDim; iy++) {
+				fill(((instance + ix + iy) % 2)*255);
+				rect(ix*d,iy*d, d, d);
+				}
+		pop();
+		}
+		
+		
+	function resetTrials() {
+		my.counter = 0;
+		my.counterSound = 0;
+		my.start = millis();
+		htmlSet("cycleNumber","Cycle: " + my.counter);
+		}
+	
+	function keyPressed() {
+		}
+	
+	function keyReleased() {
+		}
+
+	function htmlSet(name,s) {
+		document.getElementById(name).innerHTML = s;
+		}	
+	
+    </script>       
+    </div>
+    
+	</body> 
+</html> 
