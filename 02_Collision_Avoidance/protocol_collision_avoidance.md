@@ -25,7 +25,7 @@ Tadpole rearing media: a solution of 15 mM NaCl, 0.5 mM KCl, 1.0 mM MgSO4, 150 Î
 > As an alternative, use an old CRT monitor, or an iPad-like tablet.
 
 * Computer with Internet access
-* Plastic Petri dish
+* Plastic Petri dish (8.5 cm in diameter)
 * Web-camera for video recording
 
 **Optional:**
@@ -49,8 +49,8 @@ We recommend to use a short-throw USB pico-projector, and a screen made of a pie
 
 1. In a browser, open the repository of Xenopus behavioral protocols: https://github.com/khakhalin/Xenopus-Behavior . Navigate to the current version of the Collision Avoidance Stimulator (Fig 1B). Project the image.
 2. Adjust the background lightness to medium levels, to maximize the contrast without blinding the tadpole.
-3. Place a Petri dish on top of the screen. Make the circle of the program match the Petri dish; adjust the radius if needed.
-4. Set the parameters. Use 20, or better, 30 s as a waiting time between stimuli, to prevent habituation. Adjust the parameters to make the black dot ~5 mm in diameter (comparable to the size of a tadpole), and travel at speed of 2-5 cm/s (comparable to the speed of a tadpole).  Note that making the circle faster and smaller increases the chances of triggering a "fast" poorly coordinated escape response, while keeping it slower and larger allows tadpoles to implement slower, spatially adjusted course corrections (Khakhalin 2014; Khakhalin 2019).
+3. Place a Petri dish on top of the screen, and fill it with tadpole water, 1-1.5 cm deep. Make the arena of the program match the position and size of the Petri dish; adjust the radius if needed.
+4. Set the stimulation parameters. Wait for at least 20, better 30 s between the stimuli, to prevent habituation. Make the black dot ~5 mm in diameter (comparable to the size of a tadpole), traveling at a speed of 2-5 cm/s (comparable to the speed of a tadpole). Note that making the circle faster and smaller would increase the chances of triggering a "fast" poorly coordinated escape response, while keeping the circle slower and larger allows tadpoles to implement slower, more spatially informed course corrections (Khakhalin 2014; Khakhalin 2019).
 5. Target the circle using LEFT / RIGHT keys, and send it towards the tadpole by pressing the UP key. You can always return it to the center by hitting the DOWN key. Sending the circle towards the tadpole set the timer in the left bottom corner of the screen. The timer controls the color of the stimulus circle, making it pale during the inter-stimulus interval, to prevent habituation.
 6. Before running actual experiments, practice your targeting. As healthy tadpoles tend to travel around the edges of the arena, it is usually enough to keep the target fixed, and time your sending the circle on the collision trajectory. Do not press the LEFT / RIGHT keys when the circle is in motion, as lateral motion increases the speed of the circle.
 7. During actual experiments, place all control tadpoles in one bowl, and all treatment tadpoles in another one. Keep the experimenter blinded to the identity of tadpoles in each bowl, and let them alternate between bowls.
