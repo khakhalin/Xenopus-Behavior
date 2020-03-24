@@ -72,7 +72,7 @@ The stimulation program presented here can also be used for multisensory experim
 
 **Solutions:**
 
-* Give the tadpole a minute to acclimate, then startle it with a gentle tap on the projection device. Ideally, a tadpole should always be swimming along the wall, with a speed of 2-5 cm/s.
+* Give the tadpole a minute to acclimate, then startle it with a gentle tap on the projection device. Ideally, a tadpole should always be swimming along the wall, with a speed of 1-3 cm/s.
 * Check the water temperature. *X. laevis* tadpoles prefer the temperature of 18° to 21°C, which is slightly colder than room temperature. If the projector heats the water, replace it regularly.
 * Add ambient light to the chamber: e.g. make the screen around the chamber white on the inside. Tadpoles stop swimming if the surrounding is dark.
 * Run the experiments earlier in the morning: if kept on a 12/12 light cycle with "dawn" at 7 am, tadpoles seem most active between 9 am and 12 pm, and often stop responding in the afternoon.
