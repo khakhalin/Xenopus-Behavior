@@ -11,7 +11,7 @@ def snapshot():
     gpCam.take_photo() # initializes GoPro photo acquisition
     p = time_stamp() # creates variable to add to the list of photo time stamps
     photo_stamp.append(p) # adds the time stamp variable from line above to the list
-    print photo_stamp # prints the list
+    print (photo_stamp) # prints the list
 
 def stimulate():
     import u3 # Open the first found LabJack U3
@@ -21,13 +21,13 @@ def stimulate():
     time.sleep(0.15) # wait for 0.15 seconds, the length of the stimulus vibration
     t = time_stamp() # creates variable to add to the list of stimulus time stamps
     stim_stamp.append(t) # adds the time stamp variable from the line above to the list
-    print stim_stamp # prints the list
+    print (stim_stamp) # prints the list
     vibrator.writeRegister(FIO4_STATE_REGISTER, 0) # Deliver voltage to FIO4 to power the vibrator
 
 global start_timer # makes this a global variable
 start_timer = time.time() # creates variable for experiment start time
-end_timer = start_timer + 3600 # this is when the experiment should stop running
-print start_timer
+end_timer = start_timer + 4200 # this is when the experiment should stop running, should be enough time to acquire 12 images
+print (start_timer)
 
 
 def time_stamp(): # this function is used to get time stamps for stimuli presentations & photos
@@ -51,7 +51,8 @@ def start(): # this function runs the actual experiment
 
 start() # calls start() function to run experiment
 
-print stim_stamp # prints vector with stimuli presentation time stamps
-print photo_stamp # prints vector with photo time stamps
+print ('Here are the time stamps for photo acquisitions: ', photo_stamp) # prints vector with photo time stamps
+
+print ('Here are the time stamps for stimulus presentations: ', stim_stamp) # prints vector with stimuli presentation time stamps
 
 gpCam.downloadAll() # downloads all media from GoPro to current working directory
