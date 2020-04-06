@@ -16,13 +16,13 @@ def snapshot():
 def stimulate():
     import u3 # Open the first found LabJack U3
     vibrator = u3.U3() # defines vibrator variable as u3 labjack
-    FIO4_STATE_REGISTER = 6004 # defines which connection will be used to deliver power to vibrator
-    vibrator.writeRegister(FIO4_STATE_REGISTER, 1) # Deliver voltage to FIO4 to power the vibrator
+    FIO6_STATE_REGISTER = 6004 # defines which connection will be used to deliver power to vibrator
+    vibrator.writeRegister(FIO6_STATE_REGISTER, 1) # Deliver voltage to FIO6 to power the vibrator
     time.sleep(0.15) # wait for 0.15 seconds, the length of the stimulus vibration
     t = time_stamp() # creates variable to add to the list of stimulus time stamps
     stim_stamp.append(t) # adds the time stamp variable from the line above to the list
     print (stim_stamp) # prints the list
-    vibrator.writeRegister(FIO4_STATE_REGISTER, 0) # Deliver voltage to FIO4 to power the vibrator
+    vibrator.writeRegister(FIO6_STATE_REGISTER, 0) # Deliver voltage to FIO6 to power the vibrator
 
 global start_timer # makes this a global variable
 start_timer = time.time() # creates variable for experiment start time
