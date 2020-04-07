@@ -55,4 +55,6 @@ print ('Here are the time stamps for photo acquisitions: ', photo_stamp) # print
 
 print ('Here are the time stamps for stimulus presentations: ', stim_stamp) # prints vector with stimuli presentation time stamps
 
+vibrator.close() # closes u3 labjack for other uses
+
 gpCam.downloadAll() # downloads all media from GoPro to current working directory
