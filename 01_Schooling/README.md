@@ -47,3 +47,11 @@ $ goPro = GoProCamera.GoPro(constants.gpcontrol)
 $ Waking up...
 $ Camera successfully connected!
 $ Connected to (%%.%.%.%) #your computer’s IP address  
+
+----- Jupyter notebook installation
+
+The schooling analysis program runs using jupyter notebook, which requires Python 3.3 or greater, or Python 2.7. 
+
+9. To install jupyter notebook, enter the following in a command prompt/terminal window:
+
+$ pip install notebook
