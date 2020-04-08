@@ -35,7 +35,7 @@ $ pip install goprocam
 
 5.	On the GoPro screen, navigate to Preferences>Connections>Wireless connections and turn your camera’s Wireless Connections ON.
 
-6.	Using your computer, navigate to available wireless connections, locate your camera’s wireless identifier, and connect to you GoPro camera. Once connected, your Command Prompt window should display a message similar to:
+6.	Using your computer, navigate to available wireless connections, locate your camera’s wireless identifier, and connect to your GoPro camera. Once connected, your command crompt/terminal window should display a message similar to:
 
 
 7.	In the command prompt/terminal window, enter the following:
