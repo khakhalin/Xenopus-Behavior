@@ -18,9 +18,9 @@ Tadpole rearing media: 15 mM NaCl, 0.5 mM KCl, 1.0 mM MgSO4, 150 μM KH2PO4, 50 
 
 * Projection table
 
-> Use 1100 cm (36') of 20×40 mm (1''×2'') pine beam; 32 wood screws; 4 furniture felt pads; 2 pieces of clean acrylic 31×31 cm (1'×1'), and a white disposable plastic apron (Fig 1A).
+> Use 1100 cm (36') of 20×40 mm (1''×2'') pine beam; 32 wood screws (e.g. #8 x 1'' flat head); 4 furniture felt pads; 2 pieces of clean acrylic 31×31 cm (1'×1'), and a white disposable plastic apron (Fig 1A).
 
-* Short throw projector (e.g. AAXA P300)
+* Short throw projector (one capable of producing a focused image at a distance of ~1 m), e.g. AAXA P300
 
 > As an alternative, use a CRT monitor, or an iPad-like tablet.
 
@@ -41,7 +41,7 @@ Tadpole rearing media: 15 mM NaCl, 0.5 mM KCl, 1.0 mM MgSO4, 150 μM KH2PO4, 50 
 
 ## Projecting device
 
-As the visual stimulus is projected on the floor of the chamber, the tadpole should be able to see the image even at sharp angles. We therefore cannot use a standard LCD monitor for visual stimulation, but have to use either a projector, an old CRT monitor placed horizontally, or a tablet. As a test, if you cannot see the image on the screen when looking along the surface, the tadpole won't see it as well.
+As the visual stimulus is projected on the floor of the chamber, the tadpole should be able to see the image even at sharp angles. We therefore cannot use a standard LCD monitor for visual stimulation, but have to use either a projector, an old CRT monitor placed horizontally, or a tablet. As a test, if you cannot see the image on the screen when looking along the surface, the tadpole will not see it as well.
 
 We recommend to use a short-throw USB pico-projector, and a screen made of a piece of white disposable polyethilene apron, fixed between two pieces of clean acrylic (Fig 1A). The downsides of CRT monitors is that the surface is never quite flat; they heat the water; and the video recording is compromised by a refresh beam artifact. The protocol also works with high-end tablets, but we have not explored this approach systematically.
 
@@ -50,8 +50,8 @@ We recommend to use a short-throw USB pico-projector, and a screen made of a pie
 1. In a browser, open the repository of Xenopus behavioral protocols:
    https://github.com/khakhalin/Xenopus-Behavior 
    Navigate to the current version of the Collision Avoidance Stimulator (Fig 1B). Project the image.
-2. Adjust the background lightness, to keep the contrast high without blinding the tadpole.
-3. Place a Petri dish on top of the screen, and fill it with tadpole water, 1-1.5 cm deep. Make the arena of the program match the position of the Petri dish; adjust the radius if needed.
+2. Adjust the background lightness, to keep the contrast high without blinding the tadpole. To assess the optimal lightness, run a series of experiments, using either this protocol, or the Optomotor Response Protocol (Dong et al. 2009), and pick the contrast with highest response rate.
+3. Place a Petri dish on top of the screen, and fill it with tadpole rearing media, 1-1.5 cm deep. Make the arena of the program match the position of the Petri dish; adjust the radius if needed.
 4. Set the stimulation parameters. Wait for at least 20, better 30 s between the stimuli, to prevent habituation. Make the black dot ~5 mm in diameter (comparable to the size of a tadpole), traveling at a speed of 2-5 cm/s (comparable to the speed of a tadpole). Making the circle faster and smaller would increase the chances of triggering a "fast" poorly coordinated escape response, while keeping the circle slower and larger allows tadpoles to implement more spatially informed course corrections (Khakhalin et al. 2014; Khakhalin 2019).
 5. Target the circle using LEFT / RIGHT keys, then send it towards the tadpole by pressing the UP key. You can return the circle to the center by hitting the DOWN key. Sending the circle towards the tadpole sets the timer in the left bottom corner of the screen. The timer controls the color of the circle, making it pale during the inter-stimulus interval, to prevent habituation.
 6. Before running actual experiments, practice your targeting. As healthy tadpoles tend to travel around the edges of the arena, it is usually enough to keep the target fixed, and time your sending the circle on the collision trajectory. Do not press the LEFT / RIGHT keys while the circle is in motion, as lateral motion increases the speed of the stimulus.
@@ -70,12 +70,12 @@ The stimulation program presented here can also be used for multisensory experim
 
 ## Troubleshooting
 
-**Problem:** Tadpoles are sluggish and don't swim, staying in one place; yet the moment they are returned to the tank, they start swimming again.
+**Problem:** Tadpoles are sluggish and do not swim, staying in one place; yet the moment they are returned to the tank, they start swimming again.
 
 **Solutions:**
 
 * Give the tadpole a minute to acclimate, then startle it with a gentle tap. Ideally, a tadpole should always be swimming, with a speed of 1-3 cm/s.
-* Make sure the water is cold enough. *X. laevis* tadpoles prefer temperatures slightly colder than room temperature (18° to 21°C). If the projector heats the dish, replace the water regularly.
+* Make sure the media is cold enough. *X. laevis* tadpoles prefer temperatures slightly colder than room temperature (18° to 21°C). If the projector heats the dish, replace the media regularly.
 * Add ambient light to the chamber: e.g. make the screen around it white. Tadpoles stop swimming if the environment is too dark.
 * Run the experiments earlier in the morning: on a 12/12 light cycle with "dawn" at 7 am, tadpoles seem most active between 9 am and 12 pm, and often stop responding in the afternoon.
 * Do not feed tadpoles before the experiment.
@@ -86,17 +86,21 @@ The stimulation program presented here can also be used for multisensory experim
 
 A typical fast avoidance maneuver involves a sharp turn by ~90±40° performed at a distance of ~1 cm from the circle, followed by a brief acceleration to 12±4 cm/s. A slow course correction is produced in response to larger, slower circles, and involves a shallower turn by ~70±50° and acceleration to ~7±4 cm/s (Khakhalin et al. 2014). 
 
-A typical responsiveness for this protocol is 80% for control stage 49 tadpoles (Khakhalin et al. 2014), but it goes down to 70% in dark-reared tadpoles (Ramirez-Vizcarrondo et al. 2015), 50% for tadpoles adjusted to strong visual stimulation (Jang at al. 2016); 40% for animals with mild neurodevelopmental abnormalities (James et al. 2015), and 20% in nutritionally restricted tadpoles (Khakhalin, unpublished). A power analysis shows that with 20 stimuli per tadpole (10 minutes of recording), base response probability of 70%, 20 animals in each group, and α = 0.05, one can detect a drop of responsiveness to 60% with 80% power. Together, this makes visual collision avoidance a powerful tool to dissect abnormalities in the sensorimotor system of Xenopus tadpoles.
+A typical responsiveness for this protocol is 80% for control Nieuwkoop-Faber stage 49 tadpoles (15-30 days post-fertilization, if raised at 20°C; Khakhalin et al. 2014), but it goes down to 70% in dark-reared tadpoles (Ramirez-Vizcarrondo et al. 2015), 50% for tadpoles adjusted to strong visual stimulation (Jang at al. 2016); 40% for animals with mild neurodevelopmental abnormalities (James et al. 2015), and 20% in nutritionally restricted tadpoles raised in isolated wells (Khakhalin, unpublished). A power analysis shows that with 20 stimuli per tadpole (10 minutes of recording), base response probability of 70%, 20 animals in each group, and α = 0.05, one can detect a drop of responsiveness to 60% with 80% power. Together, this makes visual collision avoidance a powerful tool to dissect abnormalities in the sensorimotor system of Xenopus tadpoles, from retinal disfunction, through sensorimotor transformation proper, and down to locomotor deficits.
 
 # Figure
 
 **A.** The projection table. **B.** Schematics of the experiment. **C.** Representative avoidance trajectories. **D.** Average (solid) and standard deviation (dashed) values of swimming speed for 500 fast avoidance responses. **E.** Response probabilities for normal and dark-reared tadpoles. **F.** Turning angles for normal and dark-reared tadpoles. This data was previously presented in (Khakhalin at al. 2014) and (Ramirez-Vizcarrondo et al. 2015), but was analyzed in a new way for this paper.
+
+![](C:\Users\khakh\Documents\Projects\Xenopus Behavior\Xenopus-Behavior-GIT\02_Collision_Avoidance\collision_fig1.svg)
 
 # References
 
 Chao, R., Macía-Vázquez, G., Zalama, E., Gómez-García-Bermejo, J., & Perán, J. R. (2015). Automated tracking of drosophila specimens. Sensors, 15(8), 19369-19392.
 
 Colomb, J., Reiter, L., Blaszkiewicz, J., Wessnitzer, J., & Brembs, B. (2012). Open source tracking and analysis of adult Drosophila locomotion in Buridan's paradigm with and without visual targets. PloS one, 7(8).
+
+Dong, W., Lee, R. H., Xu, H., Yang, S., Pratt, K. G., Cao, V., ... & Aizenman, C. D. (2009). Visual avoidance in Xenopus tadpoles is correlated with the maturation of visual responses in the optic tectum. Journal of neurophysiology, 101(2), 803-815.
 
 Henriet, E., Mannioui, A., Khakhalin, A., & Zalc, B. (2017). A behavioral test to evaluate the functional consequences in a Xenopus laevis model of inducible-demyelination and myelin repair. In Multiple Sclerosis Journal (Vol. 23, pp. 996-996).
 
