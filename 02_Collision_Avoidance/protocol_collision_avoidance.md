@@ -50,9 +50,9 @@ We recommend to use a short-throw USB pico-projector, and a screen made of a pie
 1. In a browser, open the repository of Xenopus behavioral protocols:
    https://github.com/khakhalin/Xenopus-Behavior 
    Navigate to the current version of the Collision Avoidance Stimulator (Fig 1B). Project the image.
-2. Adjust the background lightness, to keep the contrast high without blinding the tadpole. To assess the optimal lightness, run a series of experiments, using either this protocol, or the Optomotor Response Protocol (Dong et al. 2009), and pick the contrast with highest response rate.
+2. Adjust the background lightness, to keep the contrast high without blinding the tadpole. To assess the optimal lightness for your setup, run a series of experiments with different contrasts, and pick the contrast with the highest response rate.
 3. Place a Petri dish on top of the screen, and fill it with tadpole rearing media, 1-1.5 cm deep. Make the arena of the program match the position of the Petri dish; adjust the radius if needed.
-4. Set the stimulation parameters. Wait for at least 20, better 30 s between the stimuli, to prevent habituation. Make the black dot ~5 mm in diameter (comparable to the size of a tadpole), traveling at a speed of 2-5 cm/s (comparable to the speed of a tadpole). Making the circle faster and smaller would increase the chances of triggering a "fast" poorly coordinated escape response, while keeping the circle slower and larger allows tadpoles to implement more spatially informed course corrections (Khakhalin et al. 2014; Khakhalin 2019).
+4. Set the stimulation parameters. Wait for at least 20, better 30 s between the stimuli, to prevent habituation. Make the black dot ~5 mm in diameter (comparable to the size of a tadpole), traveling at a speed of 3-5 cm/s (comparable to the speed of a tadpole). Making the circle faster or smaller (e.g. v=4 cm/s, d=4 mm) increases the chances of triggering a "fast" poorly coordinated escape response, while keeping the circle slower or larger (e.g. v=4 cm/s, d=12 mm) allows tadpoles to implement more spatially informed course corrections (Khakhalin et al. 2014; Khakhalin 2019).
 5. Target the circle using LEFT / RIGHT keys, then send it towards the tadpole by pressing the UP key. You can return the circle to the center by hitting the DOWN key. Sending the circle towards the tadpole sets the timer in the left bottom corner of the screen. The timer controls the color of the circle, making it pale during the inter-stimulus interval, to prevent habituation.
 6. Before running actual experiments, practice your targeting. As healthy tadpoles tend to travel around the edges of the arena, it is usually enough to keep the target fixed, and time your sending the circle on the collision trajectory. Do not press the LEFT / RIGHT keys while the circle is in motion, as lateral motion increases the speed of the stimulus.
 7. During actual experiments, place tadpoles for each treatment in a separate bowl, and make the experiment alternate between groups, while keeping them blinded to the identity of each group.
@@ -99,8 +99,6 @@ A typical responsiveness for this protocol is 80% for control Nieuwkoop-Faber st
 Chao, R., Macía-Vázquez, G., Zalama, E., Gómez-García-Bermejo, J., & Perán, J. R. (2015). Automated tracking of drosophila specimens. Sensors, 15(8), 19369-19392.
 
 Colomb, J., Reiter, L., Blaszkiewicz, J., Wessnitzer, J., & Brembs, B. (2012). Open source tracking and analysis of adult Drosophila locomotion in Buridan's paradigm with and without visual targets. PloS one, 7(8).
-
-Dong, W., Lee, R. H., Xu, H., Yang, S., Pratt, K. G., Cao, V., ... & Aizenman, C. D. (2009). Visual avoidance in Xenopus tadpoles is correlated with the maturation of visual responses in the optic tectum. Journal of neurophysiology, 101(2), 803-815.
 
 Henriet, E., Mannioui, A., Khakhalin, A., & Zalc, B. (2017). A behavioral test to evaluate the functional consequences in a Xenopus laevis model of inducible-demyelination and myelin repair. In Multiple Sclerosis Journal (Vol. 23, pp. 996-996).
 

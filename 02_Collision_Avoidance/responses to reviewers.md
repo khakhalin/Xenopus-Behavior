@@ -20,7 +20,7 @@ The exact point at which the tadpole will be "blinded" by the light probably dep
 
 To make the protocol a bit more actionable, however, I now added the following sentence:
 
-"Adjust the background lightness, to keep the contrast high without blinding the tadpole. **To assess the optimal lightness, run a series of experiments, using either this protocol, or the Optomotor Response Protocol (Dong et al. 2009), and pick the contrast with highest response rate.**"
+"Adjust the background lightness, to keep the contrast high without blinding the tadpole. **To assess the optimal lightness for your setup, run a series of experiments with different contrasts, and pick the contrast with the highest response rate.**"
 
 >  \3. “…and fill it with tadpole water”.
 
@@ -39,9 +39,9 @@ Thank you!
 
 > “A typical responsiveness for this protocol is 80% control stage 49 tadpoles.” Please indicate here the approximate number of days post-fertilization for developmental stage 49. (This is suggested since stage 49 can encompass a relatively large window of time.)
 
-Stage 49 is indeed the longest stage in tadpole development, and it is true that we prefer not to work with tadpoles that are still technically 49, but have grown too large. I now added the following short comment:
+Stage 49 is indeed the longest stage in tadpole development, and it is true that we prefer not to work with tadpoles that are still technically 49, but have grown too large. I have now added the following short comment:
 
-"A typical responsiveness for this protocol is 80% for control stage 49 tadpoles (**15-30 days post-fertilization, if raised at 20°C;** Khakhalin et al. 2014),"
+"A typical responsiveness for this protocol is 80% for control Nieuwkoop-Faber stage 49 tadpoles (**15-30 days post-fertilization, if raised at 20°C;** Khakhalin et al. 2014),"
 
 > Nice idea to include Power Analysis! Very nice. 
 
@@ -49,13 +49,15 @@ Thank you!!
 
 > References for this formal protocol should be restricted to peer-reviewed, accepted work. Thus, the BioRxiv reference needs to be removed, unless it has since been accepted for publication.
 
-I think there are different opinions about the role of pre-prints in modern scientific ecosystem, and many people cite arxiv and bioarxiv papers before they are "officially" peer-reviewed. In computer science, for example, some very influential papers never get "officially" published, and still accrue hundreds of citations. (The paper YOLO3 by Redmon & Farhadi, 2018, for example, has 3.5k citations now, yet as far as I know, it never left arxiv.org)
+I think there are different opinions about the role of pre-prints in modern scientific ecosystem, and many people cite arxiv and bioarxiv papers before they are "officially" peer-reviewed. In computer science, for example, some influential papers never get "officially" published at all, and still accrue hundreds of citations. (The paper YOLO3 by Redmon & Farhadi, 2018, for example, has 3.5k citations now, yet as far as I know, it never left arxiv.org)
 
-My bioarxiv preprint contains several unique models and experiments that I think could of interest to the reader, and several colleagues have provided constructive criticism to it, that I incorporated. It is not yet officially peer-reviewed, mostly as I was too overwhelmed this year to submit it anywhere. Sorry! I hope it can be possible to retain the citation.
+My bioarxiv preprint contains several unique models and experiments that I think could be of interest to the reader. Also, several colleagues have provided detailed criticism to it, that I incorporated. It is not yet officially published, as I was too overwhelmed this year to submit it anywhere. Sorry! I hope it can be possible to retain the citation.
+
+
 
 # Reviewer #2
 
->  The chapter titled “Visual Collision Avoidance in Xenopus Tadpoles” by Dr. Khakhalin, has the potential to benefit several researchers in the *Xenopus* community. Xenopus has been and is still used as an excellent vertebrate model to study developmental, genetic, and biochemical dynamics. As our abilities to demonstrate molecular and cellular effects advance, so must of ability to demonstrates the functional outcomes those effects. However, there are few behavioral assays for *Xenopus* and using a commercially available platform, such as ANY-maze, is very expensive (~$1500 annual license fee). Here, Dr. Khakhalin has designed a system to video record and analyze tadpole locomotion as a function of avoidance behavior. The system is assembled using basic materials and video devices at a very low costs to researchers. The capturing and analysis can be carried out on open-source platforms, avoiding the very expensive licensing fees normally associated with behavioral analysis software. In addition to being used by researchers, the low cost of this equipment facilitates its use in undergraduate biology laboratory courses as well.
+> The chapter titled “Visual Collision Avoidance in Xenopus Tadpoles” by Dr. Khakhalin, has the potential to benefit several researchers in the *Xenopus* community. Xenopus has been and is still used as an excellent vertebrate model to study developmental, genetic, and biochemical dynamics. As our abilities to demonstrate molecular and cellular effects advance, so must of ability to demonstrates the functional outcomes those effects. However, there are few behavioral assays for *Xenopus* and using a commercially available platform, such as ANY-maze, is very expensive (~$1500 annual license fee). Here, Dr. Khakhalin has designed a system to video record and analyze tadpole locomotion as a function of avoidance behavior. The system is assembled using basic materials and video devices at a very low costs to researchers. The capturing and analysis can be carried out on open-source platforms, avoiding the very expensive licensing fees normally associated with behavioral analysis software. In addition to being used by researchers, the low cost of this equipment facilitates its use in undergraduate biology laboratory courses as well.
 
 Thank you so much for your lovely and positive summary!
 
@@ -63,7 +65,7 @@ Thank you so much for your lovely and positive summary!
 
 >  Define the size of wood screws used to assemble the equipment (ex. #8 x 1” flat head).
 
-Added (I think I might have used a mix of 1'' and 1-1/4'', but I don't think this is critical.)
+Added (I think I actually used this exact size!)
 
 > Eliminate contractions. “Won’t” is used in the last sentence in the “Projecting Device”section.
 
@@ -71,9 +73,9 @@ Fixed (one "won't", and one "don't").
 
 > Add a sentence to mention how this assay can be applied to or adapter for use with other research areas, like locomotor recovery after injury. The brief mention in this possibility in the abstract is too vague.
 
-I am not quite sure what would be the best way to write about it, as the original version of the protocol never mentioned locomotor injury, but to further stimulate the creativity of readers, I now added the following half-sentence to the last sentence in the "Discussion" session:
+I am not quite sure what would be the best way to write about it, as the original version of the protocol doesn't mention locomotor injury. Yet, to further stimulate readers' imagination, I now added the following half-sentence to the very end of the "Discussion" section:
 
-Together, this makes visual collision avoidance a powerful tool to dissect abnormalities in the sensorimotor system of Xenopus tadpoles, **from retinal disfunction, through sensorimotor transformation proper, and down to locomotor deficits**.
+"Together, this makes visual collision avoidance a powerful tool to dissect abnormalities in the sensorimotor system of Xenopus tadpoles, **from retinal disfunction, through sensorimotor transformation proper, and down to locomotor deficits**."
 
 > Define a “short throw projector”, even briefly.
 
@@ -81,7 +83,11 @@ Added: "Short throw projector **(one capable of producing a focused image at a d
 
 > The author wrote “Make the black dot ~5 mm in diameter (comparable to the size of a tadpole). The “comparable” size of the dot is dependent on the developmental stage (size) of the tadpole. NF stage 49 is mentioned but do size limitations exist? Can the assay be applied to larger tadpoles at advanced developmental stages, in larger vessels? If so, it should be noted or further clarified.
 
-The word "comparable" is often used in the "order of magnitude" sense, such that a size of a tadpole is not comparable to that of a whale, but is probably comparable to that of a ladybird bug. It seems that young s49 tadpoles respond best to dots that are somewhat similar to them in size, which may suggest that collision avoidance has something to do with schooling behaviors, and avoidance of other tadpoles, but may also be an artifact of their optics that has no deep ecological meaning. One could potentially study that by looking at larger tadpoles, or comparing visual avoidance in Xenopus laevis tadpoles to that in Xenopus tropicalis, but I have never run these experiments. I would prefer to leave this word "comparable" as a little suggestive hint that may stimulate the imagination of the reader, is it seem to have piqued your curiosity, but if you think that it is inappropriate, let me know, and I'll delete it.
+The word "comparable" is sometimes used in the sense of the "order of magnitude". The size of a tadpole is not comparable to that of a whale, but is probably comparable to that of a ladybird bug. It seems that young s49 tadpoles respond best to dots that are somewhat similar to them in size, which may suggest that collision avoidance has something to do with schooling behaviors, and avoidance of other tadpoles, but may also be an artifact of their optics that has no deep ecological meaning. One could potentially study that by looking at older s49 tadpoles, or comparing visual avoidance in Xenopus laevis tadpoles to that in Xenopus tropicalis, but I have never run these experiments.
+
+To hopefully address at least some of your concerns, I now slightly updated the sentence, to better reflect my experience with this protocol:
+
+"Make the black dot ~5 mm in diameter (comparable to the size of a tadpole), traveling at a speed of **3**-5 cm/s (comparable to the speed of a tadpole). Making the circle faster **or** smaller **(e.g. v=4 cm/s, d=4 mm)** **increases the chances** of triggering a "fast" poorly coordinated escape response, while keeping the circle slower **or** larger **(e.g. v=4 cm/s, d=12 mm)** allows tadpoles to implement more spatially informed course corrections (Khakhalin et al. 2014; Khakhalin 2019)."
 
 > In the discussion, the term “stage” should be preceded by Nieuwkoop-Faber (NF).7. 
 
@@ -90,3 +96,7 @@ Added: "A typical responsiveness for this protocol is 80% for control **Nieuwkoo
 > Consider showing an actual image of the experimental setup.
 
 The photo of the setup is now added to the figure.
+
+Thank you!
+
+A.
