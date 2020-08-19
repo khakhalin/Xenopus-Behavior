@@ -1,6 +1,6 @@
 # Schooling in Xenopus laevis tadpoles
 
-* [Protocol preprint](protocol_schoocling.md) (as a Markdown document)
+* [Protocol preprint](protocol_schooling.md) (as a Markdown document)
 * [Installation instructions](instructions.md)
 * Analysis notebooks:
   * [Typical analysis of sample data](schooling_analysis.ipynb), provided in this repository (folder `data`) 

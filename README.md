@@ -1,11 +1,11 @@
-# Behavioral assays in Xenopus tadpoles
+# Behavioral assays to assess neural development in Xenopus laevis tadpoles
 
-This repository contains collection of protocols and software tools for behavioral studies in Xenopus tadpoles.
+This repository contains a collection of protocols and software tools for behavioral studies in Xenopus tadpoles.
 
-## Protocols
+## Separate Protocols
 
-1. Schooling
-2. [Collision Avoidance](https://github.com/khakhalin/Xenopus-Behavior/blob/master/02_Collision_Avoidance/protocol_collision_avoidance.md)
+1. [Schooling](01_Schooling/protocol_schooling.md)
+2. [Collision Avoidance](/02_Collision_Avoidance/protocol_collision_avoidance.md)
 3. Opto-Motor Response (OMR)
 4. Pre-Pulse Inhibition (PPI)
 5. Acoustic Habituation
