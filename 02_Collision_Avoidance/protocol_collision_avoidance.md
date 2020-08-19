@@ -92,7 +92,7 @@ A typical responsiveness for this protocol is 80% for control Nieuwkoop-Faber st
 
 **A.** The projection table. **B.** Schematics of the experiment. **C.** Representative avoidance trajectories. **D.** Average (solid) and standard deviation (dashed) values of swimming speed for 500 fast avoidance responses. **E.** Response probabilities for normal and dark-reared tadpoles. **F.** Turning angles for normal and dark-reared tadpoles. This data was previously presented in (Khakhalin at al. 2014) and (Ramirez-Vizcarrondo et al. 2015), but was analyzed in a new way for this paper.
 
-![](C:\Users\khakh\Documents\Projects\Xenopus Behavior\Xenopus-Behavior-GIT\02_Collision_Avoidance\collision_fig1.svg)
+![](../preprint_images/collision_fig1.svg)
 
 # References
 

@@ -1,7 +1,7 @@
-# Visual Collision Avoidance
+# Visual Collision Avoidance protocol
 
-* [Protocol preprint](protocol_collision_avoidance.md) as a Markdown document
-* The stimulation program: [code](https://github.com/khakhalin/Xenopus-Behavior/blob/master/02_Collision_Avoidance/stimulation/collision.html), [working link](http://faculty.bard.edu/~akhakhal/progs/collision.html)
+* [Protocol preprint](protocol_collision_avoidance.md) (as a Markdown document)
+* The program to generate visual stimuli: [code](https://github.com/khakhalin/Xenopus-Behavior/blob/master/02_Collision_Avoidance/stimulation/collision.html), [working link](http://faculty.bard.edu/~akhakhal/progs/collision.html)
 * [Responses to reviewers](responses_to_reviewers.md)
 
 ## Sample video recordings
