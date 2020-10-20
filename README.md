@@ -2,6 +2,8 @@
 
 This repository contains a collection of protocols and software tools for behavioral studies in Xenopus tadpoles.
 
+See our preprint for detailed instructions, comments, and advice on protocol implementation: https://www.biorxiv.org/content/10.1101/2020.08.21.261669v1
+
 ## Separate Protocols
 
 1. [Schooling](01_Schooling/protocol_schooling.md)
