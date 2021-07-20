@@ -8,7 +8,7 @@ function habituation_6well_part2_automated
 % Oct 30 2013: Some commenting here and there.
 
 
-%%% Data description
+%%% Data description (Trial numbers and group codes)
 program = [
     5 1
     6 0
